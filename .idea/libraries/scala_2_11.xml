@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="scala-2.11">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/NCQA/NcqaTransform1/target/scala-2.11/ncqatransform1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/NCQA/NcqaTransform1/target/scala-2.11/ncqatransform1_2.11-0.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

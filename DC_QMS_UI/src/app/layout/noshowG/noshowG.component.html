@@ -1,0 +1,68 @@
+<div style="margin-top: 10px">
+    <app-page-header [heading]="'No Show Gap List'" [icon]="'fa-table'"></app-page-header>
+    <div class="card">
+        <div class="row" style="margin: 20px">
+            <div class="col col-lg-12">
+                <button (click)="dt.exportCSV()" class="btn btn-sm btn-info float-right" icon="fa fa-download"
+                        label="Export" pButton type="button"></button> &nbsp;
+                <br>
+                <!--  <button type="button" pButton label="back" [routerLink]="['/csv1/']"  class="btn-space"></button>  -->
+                <p-table #dt [columns]="cols" [paginator]="true" [rows]="20" [scrollable]="false" [value]="membergaps"
+                         class="table  table-bordered table-hover" exportFilename="No_Show_GapList">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th *ngFor="let col of cols" [pSortableColumn]="col.field"
+                                class="text-center align-middle header-class">
+                                {{col.header}}
+                                <p-sortIcon [field]="col.field"></p-sortIcon>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th *ngFor="let col of cols" [ngSwitch]="col.field">
+                                <div *ngSwitchCase="'age'">
+                                    Age > {{ageFilter}}
+                                    <i (click)="ageFilter=null;dt.filter(null, col.field, col.filterMatchMode)"
+                                       *ngIf="yearFilter" class="fa fa-close" style="cursor:pointer"></i>
+                                    <p-slider (onChange)="dt.filter($event.value, 'age', 'gt');" [(ngModel)]="ageFilter"
+                                              [max]="100" [min]="0"
+                                              [style]="{'width':'100%','margin-top':'8px'}"></p-slider>
+                                </div>
+                                <div *ngSwitchCase="'countCareGaps'">
+                                    countCareGaps > {{countCareGapsfilter}}
+                                    <i (click)="countCareGapsfilter=null;dt.filter(null, col.field, col.filterMatchMode)"
+                                       *ngIf="yearFilter" class="fa fa-close" style="cursor:pointer"></i>
+                                    <p-slider (onChange)="dt.filter($event.value, 'countCareGaps', 'gt');"
+                                              [(ngModel)]="countCareGapsfilter" [max]="6" [min]="0"
+                                              [style]="{'width':'100%','margin-top':'8px'}"></p-slider>
+                                </div>
+
+                                <input (input)="dt.filter($event.target.value, col.field,'contains')" *ngSwitchDefault
+                                       pInputText type="text">
+                                <!-- col.filterMatchMode-->
+                                <p-dropdown (onChange)="dt.filter($event.value, col.field, 'equals')"
+                                            *ngSwitchCase="'gender'" [options]="genderTypes"
+                                            [style]="{'width':'100%'}"></p-dropdown>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template let-columns="columns" let-rowData pTemplate="body">
+                        <tr>
+                            <td *ngFor="let col of columns" [ngSwitch]="col.field">
+                                <span *ngSwitchCase="'countCareGaps'">
+                                    <a [routerLink]="['/member-gap-list/',rowData['patientId']]">{{rowData[col.field]}}</a>
+                                </span>
+                                <span *ngSwitchCase="'logOdds'">
+                                        {{rowData[col.field] * 100 | number: '1.0-0' }} %
+                                      </span>
+                                <span *ngSwitchDefault>{{rowData[col.field]}}</span>
+
+
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</div>
+    

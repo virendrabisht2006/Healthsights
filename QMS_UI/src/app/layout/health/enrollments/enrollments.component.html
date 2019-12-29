@@ -1,0 +1,828 @@
+<div class="col-lg-12" style="padding: 0px">
+    <h2 [ngStyle]="{ 'background-color': '#F26363',
+            'height': '59px','color':'white','padding': '10px'}"><i class="fa fa-list"></i> Enrollments</h2>
+</div>
+<div class="row col-lg-12" style="padding-left: 47px; padding-top: 20px;">
+    <p-tabView>
+        <p-tabPanel header="Open Members List ({{listLength}})">
+            <hr class="lineClass">
+            <br>
+            <span class=""><i aria-hidden="true" class="fa fa-info-circle"
+                              style="color: #1C7CD5;"></i> &nbsp; Showing {{listLength}} members who didn't enroll yet in to HealthyMe program </span>
+            <br><br>
+            <p-table #dt [(selection)]="selectedrow" [columns]="cols" [paginator]="true" [rows]="10"
+                     [scrollable]="false" [value]="confusionmatrix"
+                     class="table table-bordered table-hover table-style text-center align-middle " dataKey="memberId"
+                     selectionMode="single">
+                <!-- <p-table #dt1  class="table table-bordered table-hover"  [scrollable]="false" [value]="confusionmatrix"   [columns]="cols"  [paginator]="true" [rows]="20" [(selection)]="selectedcar" dataKey="memberId" > -->
+                <ng-template let-columns pTemplate="header">
+                    <tr class="header-row ">
+                        <th class="checkboxwidth" style="vertical-align: middle;">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <!-- <th *ngFor="let col of columns" [ngSwitch]="col.header" class=" header-class">
+                            <span  *ngSwitchCase="'Preferred Channel'" >
+                                    {{col.header}}
+                            </span>
+                            <span  *ngSwitchCase="'Recommended Rewards'" >
+                                    {{col.header}} <i class="fa fa-pie-chart" pTooltip="Dashboard"></i>
+                            </span>
+                            <span  *ngSwitchCase="'Likelihood'" >
+                                    {{col.header}} % <i class="fa fa-pie-chart" pTooltip="Dashboard"></i>
+                            </span>
+                            <span *ngSwitchDefault >
+                                    {{col.header}}
+                            </span>
+
+                        </th> -->
+                        <th class="memberDetails">Member Details</th>
+                        <th style="width: 12vw">Preferred Channel <a
+                            [routerLink]="['/health/frame-url','http://192.168.184.70/views/ChannelAnalysisDashboard/ChannelDashboard?iframeSizedToWindow=true&:embed=y&:showAppBanner=false&:display_count=no&:showVizHome=no']"><i
+                            class="fa fa-pie-chart" pTooltip="Dashboard"></i></a></th>
+                        <th style="width: 15vw">Recommended Rewards <i class="fa fa-pie-chart" pTooltip="Dashboard"></i>
+                        </th>
+                        <th style="width: 12vw">Likelihood % <a
+                            [routerLink]="['/health/frame-url','http://192.168.184.70/views/ME_LikelihoodtoEnrollDashboard/LHEDashboard?iframeSizedToWindow=true&:embed=y&:showAppBanner=false&:display_count=no&:showVizHome=no']"><i
+                            class="fa fa-pie-chart" pTooltip="Dashboard"></i></a></th>
+                        <th style="width: 10vw">Remarks</th>
+                        <th style="width: 3vw"></th>
+                    </tr>
+                </ng-template>
+                <ng-template let-columns="columns" let-expanded="expanded" let-rowData pTemplate="body">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td>
+                        <td *ngFor="let col of columns" [ngSwitch]="col.header">
+                                    <span *ngSwitchCase="'Member Details'">
+                                        <div class="col-lg-12" style="text-align: left">
+                                            {{rowData[col.field[0]]}} <span class="vl"></span>
+                                            {{rowData[col.field[2]]}} <span class="vl"></span>
+                                            {{rowData[col.field[3]]}} <span class="vl"></span><br>
+                                           <span style="font-size: 13px;"><b style="color: #1876C6">MemberId:</b><b
+                                               style="font-weight: 400;opacity: 0.5;"><a
+                                               [routerLink]="['/health/smv/',rowData[col.field[1]]]">{{rowData[col.field[1]]}} </a></b></span>
+                                        </div>
+
+
+                                    </span>
+                            <span *ngSwitchCase="'Preferred Channel'">
+
+                                        <span *ngIf="rowData[col.field] == 'Call'">
+                                            <img height="20px" pTooltip="Call" src="assets/images/call.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-volume-control-phone" pTooltip="Call"></i>  -->
+                                            <!-- <span style=" font-weight: bold;color: #0168C1;"><u>Call</u></span> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field] == 'Social Media'">
+                                            <img height="20px" pTooltip="Social Media"
+                                                 src="assets/images/social_media.png" width="20px">
+                                            <!-- <i class=" fa fa-facebook" pTooltip="Social Media"></i>  -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field] == 'SMS'">
+                                                <img height="20px" pTooltip="SMS" src="assets/images/sms.png"
+                                                     width="20px">
+                                            <!-- <i class=" fa fa-envelope-open-o" pTooltip="SMS"></i>  -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field] == 'App'">
+                                                <img height="20px" pTooltip="App" src="assets/images/app.svg"
+                                                     width="20px">
+                                            <!-- <i class=" fa fa-envelope-open-o" pTooltip="App"></i>  -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field] == 'Email'">
+                                                <img height="20px" pTooltip="Email" src="assets/images/email.png"
+                                                     width="20px">
+                                            <!-- <i class=" fa fa-envelope-open-o" pTooltip="Email"></i>   -->
+
+                                        </span>
+
+
+
+                                    </span>
+                            <span (click)="picklist(rowData)" *ngSwitchCase="'Recommended Rewards'">
+                                        <!-- <span *ngIf="rowData[col.field] | contains:'Shopping vouchers'">
+                                            <i class="fa fa-pie-chart" pTooltip="Dashboard"></i>
+                                        </span> -->
+                                        &nbsp;&nbsp;
+                                        <span *ngIf="rowData[col.field[0]] == 'Shopping vouchers'">
+                                            <img height="20px" pTooltip="Shopping vouchers"
+                                                 src="assets/images/shopping.png" width="20px">
+                                            <!-- <i class="fa fa-tag" pTooltip="Shopping vouchers"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[0]] == 'Healthy Foods'">
+                                            <img height="20px" pTooltip="Healthy Foods"
+                                                 src="assets/images/healthy_food.png" width="20px">
+                                            <!-- <i class="fa fa-cutlery" pTooltip="Healthy Foods"></i> -->
+                                        </span>
+                                        <span
+                                            *ngIf="rowData[col.field[0]] == 'Sports equipment/Access to sports facilities'">
+                                            <img height="20px" pTooltip="Sports equipment/Access to sports facilities"
+                                                 src="assets/images/Sports.jpg" width="20px">
+                                            <!-- <i class="fa fa-tag" pTooltip="Sports equipment/Access to sports facilities"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[0]] == 'Movie tickets'">
+                                            <img height="20px" pTooltip="Movie tickets" src="assets/images/movie.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-film" pTooltip="Movie tickets"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[0]] == 'Visit trips'">
+                                            <img height="20px" pTooltip="Visit trip" src="assets/images/plane.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Visit trips"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[0]] == 'Spa treatment'">
+                                            <img height="20px" pTooltip="Spa Treatment" src="assets/images/spa.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[0]] == 'Gym Membership'">
+                                                <img height="20px" pTooltip="Gym Membership" src="assets/images/gym.png"
+                                                     width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                            </span>
+                                        &nbsp;&nbsp;
+                                        <span *ngIf="rowData[col.field[1]] == 'Shopping vouchers'">
+                                            <img height="20px" pTooltip="Shopping vouchers"
+                                                 src="assets/images/shopping.png" width="20px">
+                                            <!-- <i class="fa fa-tag" pTooltip="Shopping vouchers"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[1]] == 'Healthy Foods'">
+                                            <img height="20px" pTooltip="Healthy Foods"
+                                                 src="assets/images/healthy_food.png" width="20px">
+                                            <!-- <i class="fa fa-cutlery" pTooltip="Healthy Foods"></i> -->
+                                        </span>
+                                        <span
+                                            *ngIf="rowData[col.field[1]] == 'Sports equipment/Access to sports facilities'">
+                                            <img height="20px" pTooltip="Sports equipment/Access to sports facilities"
+                                                 src="assets/images/Sports.jpg" width="20px">
+                                            <!-- <i class="fa fa-tag" pTooltip="Sports equipment/Access to sports facilities"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[1]] == 'Movie tickets'">
+                                            <img height="20px" pTooltip="Movie tickets" src="assets/images/movie.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-film" pTooltip="Movie tickets"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[1]] == 'Visit trips'">
+                                            <img height="20px" pTooltip="Visit trip" src="assets/images/plane.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Visit trips"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[1]] == 'Spa treatment'">
+                                            <img height="20px" pTooltip="Spa Treatment" src="assets/images/spa.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[1]] == 'Gym Membership'">
+                                                <img height="20px" pTooltip="Gym Membership" src="assets/images/gym.png"
+                                                     width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                            </span>
+                                        &nbsp;&nbsp;
+                                      <span *ngIf="rowData[col.field[2]] == 'Shopping vouchers'">
+                                            <img height="20px" pTooltip="Shopping vouchers"
+                                                 src="assets/images/shopping.png" width="20px">
+                                          <!-- <i class="fa fa-tag" pTooltip="Shopping vouchers"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[2]] == 'Healthy Foods'">
+                                            <img height="20px" pTooltip="Healthy Foods"
+                                                 src="assets/images/healthy_food.png" width="20px">
+                                            <!-- <i class="fa fa-cutlery" pTooltip="Healthy Foods"></i> -->
+                                        </span>
+                                        <span
+                                            *ngIf="rowData[col.field[2]] == 'Sports equipment/Access to sports facilities'">
+                                            <img height="20px" pTooltip="Sports equipment/Access to sports facilities"
+                                                 src="assets/images/Sports.jpg" width="20px">
+                                            <!-- <i class="fa fa-tag" pTooltip="Sports equipment/Access to sports facilities"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[2]] == 'Movie tickets'">
+                                            <img height="20px" pTooltip="Movie tickets" src="assets/images/movie.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-film" pTooltip="Movie tickets"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[2]] == 'Visit trips'">
+                                            <img height="20px" pTooltip="Visit trip" src="assets/images/plane.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Visit trips"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[2]] == 'Spa treatment'">
+                                            <img height="20px" pTooltip="Spa Treatment" src="assets/images/spa.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[2]] == 'Gym Membership'">
+                                                <img height="20px" pTooltip="Gym Membership" src="assets/images/gym.png"
+                                                     width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                            </span>
+                                    </span>
+                            <span *ngSwitchCase="'Likelihood'">
+                                        {{rowData[col.field]| number: '1.0-0' }}
+                                    </span>
+                            <span *ngSwitchCase="'Remarks'">
+                                        <span *ngIf="rowData[col.field]">
+                                            <i class=" fa fa-comments-o" pTooltip="Remarks"
+                                               style="color: #1876C6;font-size: 23px;"></i>
+                                        </span>
+                                        <span *ngIf="!rowData[col.field]">
+                                                <i class=" fa fa-comments-o" pTooltip="Remarks"
+                                                   style="font-size: 23px;"></i>
+                                        </span>
+
+                                    </span>
+
+                            <span *ngSwitchDefault>
+                                            {{rowData[col.field]}}
+                                    </span>
+
+                        </td>
+                        <td>
+                            <a [pRowToggler]="rowData" href="#">
+                                <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template let-columns="columns" let-rowData pTemplate="rowexpansion">
+                    <tr style="background-color: rgb(235, 249, 253);">
+                        <td [attr.colspan]="columns.length + 2" pEditableColumn>
+                            <div class="ui-g ui-fluid" style="font-size:14px;">
+                                <div class="ui-g-12 ui-md-12">
+                                    <div class="ui-g" style="padding-left: 25px">
+                                        <div class="ui-g-3">
+                                            <b>Number of Claims </b> {{rowData.enrollmentGaps}}
+                                        </div>
+                                        <div class="ui-g-9">
+                                            <b>Reason for not enrolling </b> {{rowData.reasonNotEnroll}}
+                                        </div>
+                                    </div>
+                                    <div class="ui-g" style="padding-left: 25px">
+                                        <div class="ui-g-3">
+                                            <b>Amount Spent </b> {{rowData.amountSpend}}
+                                        </div>
+                                        <div class="ui-g-9">
+                                            <span class="font-weight-bold ui-g-2" style="width: 12%;padding: 0px">Remarks </span>
+                                            <span class="ui-g-6" style="width: 55%">
+
+                                                      <textarea [(ngModel)]="rowData.remarks" class="form-control"
+                                                                type="text"></textarea>
+
+                                                    </span>
+                                            <button (click)="verifySubmit(selectedrow)" label="Verify" pButton
+                                                    style="float: right;margin-left: 34px; margin-top: 30px;width: 100px"
+                                                    type="button"></button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <div class="p-3">
+                <button (click)="OnSubmit(selectedrow)" class="btn buttonclass btn-success active" type="submit">Submit
+                    to CRM Team
+                </button>
+            </div>
+            <p-dialog #pl [(visible)]="showDialog" [baseZIndex]="10000" [minY]="70" [modal]="true" [responsive]="true"
+                      [style]="{width: '350px', minWidth: '200px'}">
+                <p-pickList [responsive]="true" [sourceStyle]="{'height':'300px'}" [source]="sourceRewards"
+                            [targetStyle]="{'height':'300px'}" [target]="targetRewards"
+                            dragdrop="true" sourceHeader="Rewards Catalogue" targetHeader="Suggested Rewards">
+                    <ng-template let-car pTemplate="item">
+                        <div class="ui-helper-clearfix">
+                            <div>{{car.label}}</div>
+                        </div>
+                    </ng-template>
+                </p-pickList>
+                <br>
+                <button (click)="saveChanges(targetRewards)" label="Save Changes" pButton type="button"></button>
+            </p-dialog>
+        </p-tabPanel>
+        <p-tabPanel header="Submitted to CRM ({{crmLength}})">
+            <p-table #dt [(selection)]="selectedrow" [columns]="cols1" [paginator]="true" [rows]="10"
+                     [scrollable]="false" [value]="crmData"
+                     class="table table-bordered table-hover table-style text-center align-middle " dataKey="memberId"
+                     selectionMode="single">
+                <!-- <p-table #dt1  class="table table-bordered table-hover"  [scrollable]="false" [value]="confusionmatrix"   [columns]="cols"  [paginator]="true" [rows]="20" [(selection)]="selectedcar" dataKey="memberId" > -->
+                <ng-template let-columns pTemplate="header">
+                    <tr class="header-row ">
+                        <!-- <th *ngFor="let col of columns" [ngSwitch]="col.header" class=" header-class">
+                            <span  *ngSwitchCase="'Preferred Channel'" >
+                                    {{col.header}}
+                            </span>
+                            <span  *ngSwitchCase="'Recommended Rewards'" >
+                                    {{col.header}} <i class="fa fa-pie-chart" pTooltip="Dashboard"></i>
+                            </span>
+                            <span  *ngSwitchCase="'Likelihood'" >
+                                    {{col.header}} % <i class="fa fa-pie-chart" pTooltip="Dashboard"></i>
+                            </span>
+                            <span *ngSwitchDefault >
+                                    {{col.header}}
+                            </span>
+
+                        </th> -->
+                        <th class="memberDetails">Member Details</th>
+                        <th style="width: 12vw">Preferred Channel <a
+                            [routerLink]="['/health/frame-url','http://192.168.184.70/views/ChannelAnalysisDashboard/ChannelDashboard?iframeSizedToWindow=true&:embed=y&:showAppBanner=false&:display_count=no&:showVizHome=no']"><i
+                            class="fa fa-pie-chart" pTooltip="Dashboard"></i></a></th>
+                        <th style="width: 15vw">Recommended Rewards <i class="fa fa-pie-chart" pTooltip="Dashboard"></i>
+                        </th>
+                        <th style="width: 12vw">Likelihood % <a
+                            [routerLink]="['/health/frame-url','http://192.168.184.70/views/ME_LikelihoodtoEnrollDashboard/LHEDashboard?iframeSizedToWindow=true&:embed=y&:showAppBanner=false&:display_count=no&:showVizHome=no']"><i
+                            class="fa fa-pie-chart" pTooltip="Dashboard"></i></a></th>
+                        <th style="width: 10vw">Remarks</th>
+                        <th style="width: 3vw"></th>
+                    </tr>
+                </ng-template>
+                <ng-template let-columns="columns" let-expanded="expanded" let-rowData pTemplate="body">
+                    <tr>
+                        <td *ngFor="let col of columns" [ngSwitch]="col.header" class="">
+                                            <span *ngSwitchCase="'Member Details'">
+                                                <div class="col-lg-12" style="text-align: left">
+                                                    {{rowData[col.field[0]]}} <span class="vl"></span>
+                                                    {{rowData[col.field[2]]}} <span class="vl"></span>
+                                                    {{rowData[col.field[3]]}} <span class="vl"></span><br>
+                                                   <span style="font-size: 13px;"><b
+                                                       style="color: #1876C6">MemberId:</b><b
+                                                       style="font-weight: 400;opacity: 0.5;"><a
+                                                       [routerLink]="['/health/smv/',rowData[col.field[1]]]">{{rowData[col.field[1]]}} </a></b></span>
+                                                </div>
+
+
+                                            </span>
+                            <span *ngSwitchCase="'Preferred Channel'">
+
+                                                <span *ngIf="rowData[col.field] == 'Call'">
+                                                    <img height="20px" pTooltip="Call" src="assets/images/call.png"
+                                                         width="20px">
+                                                    <!-- <i class="fa fa-volume-control-phone" pTooltip="Call"></i>  -->
+                                                    <!-- <span style=" font-weight: bold;color: #0168C1;"><u>Call</u></span> -->
+                                                </span>
+                                                <span *ngIf="rowData[col.field] == 'Social Media'">
+                                                    <img height="20px" pTooltip="Social Media"
+                                                         src="assets/images/social_media.png" width="20px">
+                                                    <!-- <i class=" fa fa-facebook" pTooltip="Social Media"></i>  -->
+                                                </span>
+                                                <span *ngIf="rowData[col.field] == 'SMS'">
+                                                        <img height="20px" pTooltip="SMS" src="assets/images/sms.png"
+                                                             width="20px">
+                                                    <!-- <i class=" fa fa-envelope-open-o" pTooltip="SMS"></i>  -->
+                                                </span>
+                                                <span *ngIf="rowData[col.field] == 'App'">
+                                                        <img height="20px" pTooltip="App" src="assets/images/app.svg"
+                                                             width="20px">
+                                                    <!-- <i class=" fa fa-envelope-open-o" pTooltip="App"></i>  -->
+                                                </span>
+                                                <span *ngIf="rowData[col.field] == 'Email'">
+                                                        <img height="20px" pTooltip="Email"
+                                                             src="assets/images/email.png" width="20px">
+                                                    <!-- <i class=" fa fa-envelope-open-o" pTooltip="Email"></i>   -->
+
+                                                </span>
+
+
+                                            </span>
+                            <span *ngSwitchCase="'Recommended Rewards'">
+                                                <!-- <span *ngIf="rowData[col.field] | contains:'Shopping vouchers'">
+                                                    <i class="fa fa-pie-chart" pTooltip="Dashboard"></i>
+                                                </span> -->
+                                                &nbsp;&nbsp;
+                                        <span *ngIf="rowData[col.field[0]] == 'Shopping vouchers'">
+                                            <img height="20px" pTooltip="Shopping vouchers"
+                                                 src="assets/images/shopping.png" width="20px">
+                                            <!-- <i class="fa fa-tag" pTooltip="Shopping vouchers"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[0]] == 'Healthy Foods'">
+                                            <img height="20px" pTooltip="Healthy Foods"
+                                                 src="assets/images/healthy_food.png" width="20px">
+                                            <!-- <i class="fa fa-cutlery" pTooltip="Healthy Foods"></i> -->
+                                        </span>
+                                        <span
+                                            *ngIf="rowData[col.field[0]] == 'Sports equipment/Access to sports facilities'">
+                                            <img height="20px" pTooltip="Sports equipment/Access to sports facilities"
+                                                 src="assets/images/Sports.jpg" width="20px">
+                                            <!-- <i class="fa fa-tag" pTooltip="Sports equipment/Access to sports facilities"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[0]] == 'Movie tickets'">
+                                            <img height="20px" pTooltip="Movie tickets" src="assets/images/movie.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-film" pTooltip="Movie tickets"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[0]] == 'Visit trips'">
+                                            <img height="20px" pTooltip="Visit trip" src="assets/images/plane.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Visit trips"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[0]] == 'Spa treatment'">
+                                            <img height="20px" pTooltip="Spa Treatment" src="assets/images/spa.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[0]] == 'Gym Membership'">
+                                                <img height="20px" pTooltip="Gym Membership" src="assets/images/gym.png"
+                                                     width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                            </span>
+                                        &nbsp;&nbsp;
+                                        <span *ngIf="rowData[col.field[1]] == 'Shopping vouchers'">
+                                            <img height="20px" pTooltip="Shopping vouchers"
+                                                 src="assets/images/shopping.png" width="20px">
+                                            <!-- <i class="fa fa-tag" pTooltip="Shopping vouchers"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[1]] == 'Healthy Foods'">
+                                            <img height="20px" pTooltip="Healthy Foods"
+                                                 src="assets/images/healthy_food.png" width="20px">
+                                            <!-- <i class="fa fa-cutlery" pTooltip="Healthy Foods"></i> -->
+                                        </span>
+                                        <span
+                                            *ngIf="rowData[col.field[1]] == 'Sports equipment/Access to sports facilities'">
+                                            <img height="20px" pTooltip="Sports equipment/Access to sports facilities"
+                                                 src="assets/images/Sports.jpg" width="20px">
+                                            <!-- <i class="fa fa-tag" pTooltip="Sports equipment/Access to sports facilities"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[1]] == 'Movie tickets'">
+                                            <img height="20px" pTooltip="Movie tickets" src="assets/images/movie.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-film" pTooltip="Movie tickets"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[1]] == 'Visit trips'">
+                                            <img height="20px" pTooltip="Visit trip" src="assets/images/plane.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Visit trips"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[1]] == 'Spa treatment'">
+                                            <img height="20px" pTooltip="Spa Treatment" src="assets/images/spa.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[1]] == 'Gym Membership'">
+                                                <img height="20px" pTooltip="Gym Membership" src="assets/images/gym.png"
+                                                     width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                            </span>
+                                        &nbsp;&nbsp;
+                                      <span *ngIf="rowData[col.field[2]] == 'Shopping vouchers'">
+                                            <img height="20px" pTooltip="Shopping vouchers"
+                                                 src="assets/images/shopping.png" width="20px">
+                                          <!-- <i class="fa fa-tag" pTooltip="Shopping vouchers"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[2]] == 'Healthy Foods'">
+                                            <img height="20px" pTooltip="Healthy Foods"
+                                                 src="assets/images/healthy_food.png" width="20px">
+                                            <!-- <i class="fa fa-cutlery" pTooltip="Healthy Foods"></i> -->
+                                        </span>
+                                        <span
+                                            *ngIf="rowData[col.field[2]] == 'Sports equipment/Access to sports facilities'">
+                                            <img height="20px" pTooltip="Sports equipment/Access to sports facilities"
+                                                 src="assets/images/Sports.jpg" width="20px">
+                                            <!-- <i class="fa fa-tag" pTooltip="Sports equipment/Access to sports facilities"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[2]] == 'Movie tickets'">
+                                            <img height="20px" pTooltip="Movie tickets" src="assets/images/movie.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-film" pTooltip="Movie tickets"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[2]] == 'Visit trips'">
+                                            <img height="20px" pTooltip="Visit trip" src="assets/images/plane.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Visit trips"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[2]] == 'Spa treatment'">
+                                            <img height="20px" pTooltip="Spa Treatment" src="assets/images/spa.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[2]] == 'Gym Membership'">
+                                                <img height="20px" pTooltip="Gym Membership" src="assets/images/gym.png"
+                                                     width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                            </span>
+                                            </span>
+                            <span *ngSwitchCase="'Likelihood'">
+                                                {{rowData[col.field]| number: '1.0-0' }}
+                                            </span>
+                            <span *ngSwitchCase="'Remarks'">
+                                                <span *ngIf="rowData[col.field]">
+                                                    <i class=" fa fa-comments-o" pTooltip="Remarks"
+                                                       style="color: #1876C6;font-size: 23px;"></i>
+                                                </span>
+                                                <span *ngIf="!rowData[col.field]">
+                                                        <i class=" fa fa-comments-o" pTooltip="Remarks"
+                                                           style="font-size: 23px;"></i>
+                                                </span>
+
+                                            </span>
+
+                            <span *ngSwitchDefault>
+                                                    {{rowData[col.field]}}
+                                            </span>
+
+                        </td>
+                        <td>
+                            <a [pRowToggler]="rowData" href="#">
+                                <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template let-columns="columns" let-rowData pTemplate="rowexpansion">
+                    <tr style="background-color: rgb(235, 249, 253);">
+                        <td [attr.colspan]="columns.length + 1" pEditableColumn>
+                            <div class="ui-g ui-fluid" style="font-size:14px;">
+                                <div class="ui-g-12 ui-md-12">
+                                    <div class="ui-g" style="padding-left: 25px">
+                                        <div class="ui-g-3">
+                                            <b>Number of Claims </b> {{rowData.enrollmentGaps}}
+                                        </div>
+                                        <div class="ui-g-9">
+                                            <b>Reason for not enrolling </b> {{rowData.reasonNotEnroll}}
+                                        </div>
+                                    </div>
+                                    <div class="ui-g" style="padding-left: 25px">
+                                        <div class="ui-g-3">
+                                            <b>Amount Spent </b> {{rowData.amountSpend}}
+                                        </div>
+                                        <div class="ui-g-9">
+                                            <span class="font-weight-bold ui-g-2" style="width: 12%;padding: 0px">Remarks </span>
+                                            <span class="ui-g-6" style="width: 55%">
+
+                                                              <textarea [(ngModel)]="rowData.remarks" [disabled]="true"
+                                                                        class="form-control" type="text"></textarea>
+
+                                                            </span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+        <p-tabPanel header="Personally Verified ({{verifiedLength}})">
+            <p-table #dt [(selection)]="selectedrow" [columns]="cols2" [paginator]="true" [rows]="10"
+                     [scrollable]="false" [value]="verifiedData"
+                     class="table table-bordered table-hover table-style text-center align-middle " dataKey="memberId"
+                     selectionMode="single">
+                <!-- <p-table #dt1  class="table table-bordered table-hover"  [scrollable]="false" [value]="confusionmatrix"   [columns]="cols"  [paginator]="true" [rows]="20" [(selection)]="selectedcar" dataKey="memberId" > -->
+                <ng-template let-columns pTemplate="header">
+                    <tr class="header-row ">
+                        <!-- <th *ngFor="let col of columns" [ngSwitch]="col.header" class=" header-class">
+                            <span  *ngSwitchCase="'Preferred Channel'" >
+                                    {{col.header}}
+                            </span>
+                            <span  *ngSwitchCase="'Recommended Rewards'" >
+                                    {{col.header}} <i class="fa fa-pie-chart" pTooltip="Dashboard"></i>
+                            </span>
+                            <span  *ngSwitchCase="'Likelihood'" >
+                                    {{col.header}} % <i class="fa fa-pie-chart" pTooltip="Dashboard"></i>
+                            </span>
+                            <span *ngSwitchDefault >
+                                    {{col.header}}
+                            </span>
+
+                        </th> -->
+                        <th class="memberDetails">Member Details</th>
+                        <th style="width: 12vw">Preferred Channel <a
+                            [routerLink]="['/health/frame-url','http://192.168.184.70/views/ChannelAnalysisDashboard/ChannelDashboard?iframeSizedToWindow=true&:embed=y&:showAppBanner=false&:display_count=no&:showVizHome=no']"><i
+                            class="fa fa-pie-chart" pTooltip="Dashboard"></i></a></th>
+                        <th style="width: 15vw">Recommended Rewards <i class="fa fa-pie-chart" pTooltip="Dashboard"></i>
+                        </th>
+                        <th style="width: 12vw">Likelihood % <a
+                            [routerLink]="['/health/frame-url','http://192.168.184.70/views/ME_LikelihoodtoEnrollDashboard/LHEDashboard?iframeSizedToWindow=true&:embed=y&:showAppBanner=false&:display_count=no&:showVizHome=no']"><i
+                            class="fa fa-pie-chart" pTooltip="Dashboard"></i></a></th>
+                        <th style="width: 10vw">Remarks</th>
+                        <th style="width: 3vw"></th>
+                    </tr>
+                </ng-template>
+                <ng-template let-columns="columns" let-expanded="expanded" let-rowData pTemplate="body">
+                    <tr>
+                        <td *ngFor="let col of columns" [ngSwitch]="col.header" class="">
+                                            <span *ngSwitchCase="'Member Details'">
+                                                <div class="col-lg-12" style="text-align: left">
+                                                    {{rowData[col.field[0]]}} <span class="vl"></span>
+                                                    {{rowData[col.field[2]]}} <span class="vl"></span>
+                                                    {{rowData[col.field[3]]}} <span class="vl"></span><br>
+                                                   <span style="font-size: 13px;"><b
+                                                       style="color: #1876C6">MemberId:</b><b
+                                                       style="font-weight: 400;opacity: 0.5;"><a
+                                                       [routerLink]="['/health/smv/',rowData[col.field[1]]]">{{rowData[col.field[1]]}} </a></b></span>
+                                                </div>
+
+
+                                            </span>
+                            <span *ngSwitchCase="'Preferred Channel'">
+
+                                                <span *ngIf="rowData[col.field] == 'Call'">
+                                                    <img height="20px" pTooltip="Call" src="assets/images/call.png"
+                                                         width="20px">
+                                                    <!-- <i class="fa fa-volume-control-phone" pTooltip="Call"></i>  -->
+                                                    <!-- <span style=" font-weight: bold;color: #0168C1;"><u>Call</u></span> -->
+                                                </span>
+                                                <span *ngIf="rowData[col.field] == 'Social Media'">
+                                                    <img height="20px" pTooltip="Social Media"
+                                                         src="assets/images/social_media.png" width="20px">
+                                                    <!-- <i class=" fa fa-facebook" pTooltip="Social Media"></i>  -->
+                                                </span>
+                                                <span *ngIf="rowData[col.field] == 'SMS'">
+                                                        <img height="20px" pTooltip="SMS" src="assets/images/sms.png"
+                                                             width="20px">
+                                                    <!-- <i class=" fa fa-envelope-open-o" pTooltip="SMS"></i>  -->
+                                                </span>
+                                                <span *ngIf="rowData[col.field] == 'App'">
+                                                        <img height="20px" pTooltip="App" src="assets/images/app.svg"
+                                                             width="20px">
+                                                    <!-- <i class=" fa fa-envelope-open-o" pTooltip="App"></i>  -->
+                                                </span>
+                                                <span *ngIf="rowData[col.field] == 'Email'">
+                                                        <img height="20px" pTooltip="Email"
+                                                             src="assets/images/email.png" width="20px">
+                                                    <!-- <i class=" fa fa-envelope-open-o" pTooltip="Email"></i>   -->
+
+                                                </span>
+
+
+
+                                            </span>
+                            <span *ngSwitchCase="'Recommended Rewards'">
+                                                <!-- <span *ngIf="rowData[col.field] | contains:'Shopping vouchers'">
+                                                    <i class="fa fa-pie-chart" pTooltip="Dashboard"></i>
+                                                </span> -->
+                                                &nbsp;&nbsp;
+                                        <span *ngIf="rowData[col.field[0]] == 'Shopping vouchers'">
+                                            <img height="20px" pTooltip="Shopping vouchers"
+                                                 src="assets/images/shopping.png" width="20px">
+                                            <!-- <i class="fa fa-tag" pTooltip="Shopping vouchers"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[0]] == 'Healthy Foods'">
+                                            <img height="20px" pTooltip="Healthy Foods"
+                                                 src="assets/images/healthy_food.png" width="20px">
+                                            <!-- <i class="fa fa-cutlery" pTooltip="Healthy Foods"></i> -->
+                                        </span>
+                                        <span
+                                            *ngIf="rowData[col.field[0]] == 'Sports equipment/Access to sports facilities'">
+                                            <img height="20px" pTooltip="Sports equipment/Access to sports facilities"
+                                                 src="assets/images/Sports.jpg" width="20px">
+                                            <!-- <i class="fa fa-tag" pTooltip="Sports equipment/Access to sports facilities"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[0]] == 'Movie tickets'">
+                                            <img height="20px" pTooltip="Movie tickets" src="assets/images/movie.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-film" pTooltip="Movie tickets"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[0]] == 'Visit trips'">
+                                            <img height="20px" pTooltip="Visit trip" src="assets/images/plane.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Visit trips"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[0]] == 'Spa treatment'">
+                                            <img height="20px" pTooltip="Spa Treatment" src="assets/images/spa.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                        </span>
+                                            <span *ngIf="rowData[col.field[0]] == 'Gym Membership'">
+                                                <img height="20px" pTooltip="Gym Membership" src="assets/images/gym.png"
+                                                     width="20px">
+                                                <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                            </span>
+                                        &nbsp;&nbsp;
+                                        <span *ngIf="rowData[col.field[1]] == 'Shopping vouchers'">
+                                            <img height="20px" pTooltip="Shopping vouchers"
+                                                 src="assets/images/shopping.png" width="20px">
+                                            <!-- <i class="fa fa-tag" pTooltip="Shopping vouchers"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[1]] == 'Healthy Foods'">
+                                            <img height="20px" pTooltip="Healthy Foods"
+                                                 src="assets/images/healthy_food.png" width="20px">
+                                            <!-- <i class="fa fa-cutlery" pTooltip="Healthy Foods"></i> -->
+                                        </span>
+                                        <span
+                                            *ngIf="rowData[col.field[1]] == 'Sports equipment/Access to sports facilities'">
+                                            <img height="20px" pTooltip="Sports equipment/Access to sports facilities"
+                                                 src="assets/images/sm.png" width="20px">
+                                            <!-- <i class="fa fa-tag" pTooltip="Sports equipment/Access to sports facilities"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[1]] == 'Movie tickets'">
+                                            <img height="20px" pTooltip="Movie tickets" src="assets/images/movie.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-film" pTooltip="Movie tickets"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[1]] == 'Visit trips'">
+                                            <img height="20px" pTooltip="Visit trip" src="assets/images/plane.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Visit trips"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[1]] == 'Spa treatment'">
+                                            <img height="20px" pTooltip="Spa Treatment" src="assets/images/spa.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[1]] == 'Gym Membership'">
+                                                <img height="20px" pTooltip="Gym Membership" src="assets/images/gym.png"
+                                                     width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                            </span>
+                                        &nbsp;&nbsp;
+                                      <span *ngIf="rowData[col.field[2]] == 'Shopping vouchers'">
+                                            <img height="20px" pTooltip="Shopping vouchers"
+                                                 src="assets/images/shopping.png" width="20px">
+                                          <!-- <i class="fa fa-tag" pTooltip="Shopping vouchers"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[2]] == 'Healthy Foods'">
+                                            <img height="20px" pTooltip="Healthy Foods"
+                                                 src="assets/images/healthy_food.png" width="20px">
+                                            <!-- <i class="fa fa-cutlery" pTooltip="Healthy Foods"></i> -->
+                                        </span>
+                                        <span
+                                            *ngIf="rowData[col.field[2]] == 'Sports equipment/Access to sports facilities'">
+                                            <img height="20px" pTooltip="Sports equipment/Access to sports facilities"
+                                                 src="assets/images/Sports.jpg" width="20px">
+                                            <!-- <i class="fa fa-tag" pTooltip="Sports equipment/Access to sports facilities"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[2]] == 'Movie tickets'">
+                                            <img height="20px" pTooltip="Movie tickets" src="assets/images/movie.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-film" pTooltip="Movie tickets"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[2]] == 'Visit trips'">
+                                            <img height="20px" pTooltip="Visit trip" src="assets/images/plane.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Visit trips"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[2]] == 'Spa treatment'">
+                                            <img height="20px" pTooltip="Spa Treatment" src="assets/images/spa.png"
+                                                 width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                        </span>
+                                        <span *ngIf="rowData[col.field[2]] == 'Gym Membership'">
+                                                <img height="20px" pTooltip="Gym Membership" src="assets/images/gym.png"
+                                                     width="20px">
+                                            <!-- <i class="fa fa-plane" pTooltip="Spa treatment"></i> -->
+                                            </span>
+                                            </span>
+                            <span *ngSwitchCase="'Likelihood'">
+                                                {{rowData[col.field]| number: '1.0-0' }}
+                                            </span>
+                            <span *ngSwitchCase="'Remarks'">
+                                                <span *ngIf="rowData[col.field]">
+                                                    <i class=" fa fa-comments-o" pTooltip="Remarks"
+                                                       style="color: #1876C6;font-size: 23px;"></i>
+                                                </span>
+                                                <span *ngIf="!rowData[col.field]">
+                                                        <i class=" fa fa-comments-o" pTooltip="Remarks"
+                                                           style="font-size: 23px;"></i>
+                                                </span>
+
+                                            </span>
+
+                            <span *ngSwitchDefault>
+                                                    {{rowData[col.field]}}
+                                            </span>
+
+                        </td>
+                        <td>
+                            <a [pRowToggler]="rowData" href="#">
+                                <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template let-columns="columns" let-rowData pTemplate="rowexpansion">
+                    <tr style="background-color: rgb(235, 249, 253);">
+                        <td [attr.colspan]="columns.length + 1" pEditableColumn>
+                            <div class="ui-g ui-fluid" style="font-size:14px;">
+                                <div class="ui-g-12 ui-md-12">
+                                    <div class="ui-g" style="padding-left: 25px">
+                                        <div class="ui-g-3">
+                                            <b>Number of Claims </b> {{rowData.enrollmentGaps}}
+                                        </div>
+                                        <div class="ui-g-9">
+                                            <b>Reason for not enrolling </b> {{rowData.reasonNotEnroll}}
+                                        </div>
+                                    </div>
+                                    <div class="ui-g" style="padding-left: 25px">
+                                        <div class="ui-g-3">
+                                            <b>Amount Spent </b> {{rowData.amountSpend}}
+                                        </div>
+                                        <div class="ui-g-9">
+                                            <span class="font-weight-bold ui-g-2" style="width: 12%;padding: 0px">Remarks </span>
+                                            <span class="ui-g-6" style="width: 55%">
+
+                                                              <textarea [(ngModel)]="rowData.remarks" [disabled]="true"
+                                                                        class="form-control" type="text"></textarea>
+
+                                                            </span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+    </p-tabView>
+</div>

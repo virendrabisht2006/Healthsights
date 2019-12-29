@@ -1,0 +1,129 @@
+<div style="margin-top: 10px">
+    <app-page-header [heading]="'My Measures'" [icon]="'fa-table'"></app-page-header>
+    <div class="card">
+        <div class="row" style="margin: 20px">
+            <div class="col col-lg-12">
+                <button (click)="dt.exportCSV()" *ngxPermissionsOnly="['7D']" icon="fa fa-download" label="Export"
+                        pButton style="float: right;" type="button"></button>
+                <br><br>
+                <p-table #dt [columns]="cols" [paginator]="true" [rows]="20" [scrollable]="false" [value]="membergaps"
+                         class="table table-bordered table-hover" exportFilename="My_Measures">
+                    <ng-template pTemplate="header">
+                        <tr class="text-center align-middle header-class">
+                            <!-- <th *ngFor="let col of cols" [pSortableColumn]="col.field" class="text-center align-middle header-class">
+
+                                        {{col.header}}
+                                <p-sortIcon [field]="col.field"></p-sortIcon>
+                            </th> -->
+                            <th [pSortableColumn]="'id'" width="11%">Measure ID
+                                <p-sortIcon [field]="'id'"></p-sortIcon>
+                            </th>
+                            <th [pSortableColumn]="'name'" width=""> Measure Name
+                                <p-sortIcon [field]="'name'"></p-sortIcon>
+                            </th>
+                            <th [pSortableColumn]="'programName'" width="">Program Name
+                                <p-sortIcon [field]="'programName'"></p-sortIcon>
+                            </th>
+                            <th [pSortableColumn]="'status'" width="9%"> Status
+                                <p-sortIcon [field]="'status'"></p-sortIcon>
+                            </th>
+                            <th [pSortableColumn]="'reviewComments'" width="15%"> Review Comments
+                                <p-sortIcon [field]="'reviewComments'"></p-sortIcon>
+                            </th>
+                            <th [pSortableColumn]="'reviewedBy'" width="12%"> Reviewed By
+                                <p-sortIcon [field]="'reviewedBy'"></p-sortIcon>
+                            </th>
+
+                            <th width="9%"></th>
+                        </tr>
+                        <tr>
+                            <th *ngFor="let col of cols" [ngSwitch]="col.field">
+                                <div *ngSwitchCase="'age'">
+                                    Age > {{ageFilter}}
+                                    <i (click)="ageFilter=null;dt.filter(null, col.field, col.filterMatchMode)"
+                                       *ngIf="yearFilter" class="fa fa-close" style="cursor:pointer"></i>
+                                    <p-slider (onChange)="dt.filter($event.value, 'age', 'gt');" [(ngModel)]="ageFilter"
+                                              [max]="100" [min]="0"
+                                              [style]="{'width':'100%','margin-top':'8px'}"></p-slider>
+                                </div>
+
+                                <input (input)="dt.filter($event.target.value, col.field, 'contains')" *ngSwitchDefault
+                                       pInputText type="text">
+                                <p-dropdown (onChange)="dt.filter($event.value, col.field, 'equals')"
+                                            *ngSwitchCase="'gender'" [options]="genderTypes"
+                                            [style]="{'width':'100%'}"></p-dropdown>
+                            </th>
+                            <th></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template let-columns="columns" let-rowData pTemplate="body">
+                        <tr>
+                            <td (click)="copytoCreator(rowData['id'], 1)" *ngFor="let col of columns"
+                                style="cursor: pointer;">
+                                {{rowData[col.field]}}
+                            </td>
+                            <td [ngSwitch]="rowData['status']">
+                                <div *ngSwitchCase="'Approved'">
+                                    <button class="btn btn-secondary" label="Action" pButton
+                                            style="background-color: #C8CED3;width: 100%" type="button"></button> &nbsp;
+                                    <!-- <a [routerLink]="['/configurator']" *ngxPermissionsOnly="['7W']"><i class="fa fa-2x fa-cog text-primary" style="cursor:pointer" pTooltip="Configure"></i></a> -->
+                                </div>
+                                <div *ngSwitchCase="'New'">
+                                    <!-- <i class="fa fa-2x fa-check-square text-primary" style="cursor:pointer" (click)="statusClickImg('Approved',rowData['id'])" pTooltip="Approve" *ngxPermissionsOnly="['7W']"></i>&nbsp;
+                                    <i class="fa fa-2x fa-window-close text-primary" style="cursor:pointer" (click)="statusClickImg('Rejected',rowData['id'])" pTooltip="Reject" *ngxPermissionsOnly="['7W']"></i>&nbsp; -->
+                                    <button (click)="showDialog(rowData['id'])" *ngxPermissionsOnly="['7W']"
+                                            class="btn btn-primary" label="Action" pButton
+                                            pTooltip="Approve or Reject Measure" style="width: 100%"
+                                            type="button"></button>&nbsp;
+                                    <!-- <i class="fa fa-2x fa-cog text-secondary"></i> -->
+                                </div>
+                                <div *ngSwitchDefault>
+                                    <!-- <i class="fa fa-2x fa-check-square text-secondary"></i>&nbsp;
+                                    <i class="fa fa-2x fa-window-close text-secondary"></i>&nbsp; -->
+                                    <button class="btn btn-secondary" label="Action" pButton
+                                            style="background-color: #C8CED3;width: 100%" type="button"></button>&nbsp;
+                                    <!-- <i class="fa fa-2x fa-cog text-secondary"></i> -->
+                                </div>
+
+                                <!-- <i class="fa fa-2x fa-check-square" style="cursor:pointer"></i>&nbsp;
+                                <i class="fa fa-2x fa-window-close" style="cursor:pointer"></i>&nbsp;
+                                <i class="fa fa-2x fa-cog" style="cursor:pointer" [routerLink]="['/configurator']"></i> -->
+
+                                <!-- <span class="fa-stack fa-lg" style="cursor: pointer;" >
+                                    <i class="fa fa-square fa-stack-2x"></i>
+                                    <i class="fa fa-cog fa-stack-1x fa-inverse"></i>
+                                </span> -->
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <p-dialog [(visible)]="dialogBox" [baseZIndex]="10000" [minY]="70" [modal]="true" [responsive]="true"
+                          [style]="{width: '500px', minWidth: '500px'}">
+                    <div class="col-lg-12" style="width: 300px;height: 160px;">
+                        <div class="row col-lg-12">
+                <span class="font-weight-bold">
+                    Enter Review Comments
+                </span>
+                        </div>
+                        <div class="row col-lg-12">
+                <span>
+                    <textarea [(ngModel)]="comments" class="form-control" rows="3" type="text"></textarea>
+                </span>
+                        </div>
+                        <br>
+                        <div class="row col-lg-12">
+                <span>
+                        <button (click)="statusClickImg('Approved',rowid)" class="btn btn-primary" label="Approve"
+                                pButton type="button"></button>&nbsp;&nbsp;
+                        <button (click)="statusClickImg('Rejected',rowid)" class="btn btn-primary" label="Reject"
+                                pButton type="button"></button>&nbsp;
+                </span>
+                        </div>
+                    </div>
+
+                </p-dialog>
+
+            </div>
+        </div>
+    </div>
+</div>

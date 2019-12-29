@@ -1,0 +1,174 @@
+<div style="margin-top: 10px">
+    <app-page-header *ngIf="!cmsReportFlag" [heading]="'Quality Measures'" [icon]="'fa-table'"></app-page-header>
+    <app-page-header *ngIf="cmsReportFlag" [heading]="'Reports'" [icon]="'fa-table'"></app-page-header>
+    <div class="card">
+        <div class="row" style="margin: 20px">
+            <div class="col col-lg-12 ">
+                <p-dropdown (onChange)="filterCategory($event)" *ngIf="HEDIS" [autoDisplayFirst]="false"
+                            [options]="dropdownOptions" placeholder="Select"></p-dropdown>
+                <button (click)="dt.exportCSV()" *ngxPermissionsOnly="['6D']" icon="fa fa-download" label="Export"
+                        pButton style="float: right;" type="button"></button>
+                <br><br>
+                <p-table #dt [columns]="cols" [paginator]="true" [rows]="20" [scrollable]="false" [value]="membergaps"
+                         class="table table-bordered table-hover" dataKey="id" exportFilename="Quality_Measures"
+                         selectionMode="single">
+                    <ng-template pTemplate="header">
+                        <tr *ngIf="!cmsReportFlag" class="text-center align-middle header-class">
+                            <!-- <th *ngFor="let col of cols" [pSortableColumn]="col.field" class="text-center align-middle header-class" [ngSwitch]="col.header" >
+                                        {{col.header}}
+                                <p-sortIcon [field]="col.field"></p-sortIcon>
+                            </th> -->
+                            <th [pSortableColumn]="'id'" style="width:8.5vw">Measure ID
+                                <p-sortIcon [field]="'id'"></p-sortIcon>
+                            </th>
+                            <th [pSortableColumn]="'name'" width=""> Measure Name
+                                <p-sortIcon [field]="'name'"></p-sortIcon>
+                            </th>
+                            <th [pSortableColumn]="'programName'" width="">Program Name
+                                <p-sortIcon [field]="'programName'"></p-sortIcon>
+                            </th>
+                            <th [pSortableColumn]="'type'" style="width:9.5vw">Measure Type
+                                <p-sortIcon [field]="'type'"></p-sortIcon>
+                            </th>
+                            <th [pSortableColumn]="'steward'" width="">Measure Steward
+                                <p-sortIcon [field]="'steward'"></p-sortIcon>
+                            </th>
+                            <th [pSortableColumn]="'clinocalCondition'" style="width:11.5vw">Clinical Condition
+                                <p-sortIcon [field]="'clinocalCondition'"></p-sortIcon>
+                            </th>
+                            <th [pSortableColumn]="'isActive'" style="width:7.6vw"> Status
+                                <p-sortIcon [field]="'isActive'"></p-sortIcon>
+                            </th>
+                            <th class="header-class" style="width:5vw"></th>
+                        </tr>
+                        <tr *ngIf="cmsReportFlag" class="text-center align-middle header-class">
+                            <!-- <th *ngFor="let col of cols" [pSortableColumn]="col.field" class="text-center align-middle header-class" [ngSwitch]="col.header" >
+                                        {{col.header}}
+                                <p-sortIcon [field]="col.field"></p-sortIcon>
+                            </th> -->
+                            <th [pSortableColumn]="'id'" style="width:8.5vw">Report ID
+                                <p-sortIcon [field]="'id'"></p-sortIcon>
+                            </th>
+                            <th [pSortableColumn]="'name'" width=""> Report Name
+                                <p-sortIcon [field]="'name'"></p-sortIcon>
+                            </th>
+                            <th [pSortableColumn]="'description'" style="width:35vw">Report Description
+                                <p-sortIcon [field]="'description'"></p-sortIcon>
+                            </th>
+                            <th [pSortableColumn]="'measureCategory'" style="width:12vw">Report Category
+                                <p-sortIcon [field]="'measureCategory'"></p-sortIcon>
+                            </th>
+                            <th [pSortableColumn]="'isActive'" style="width:7.6vw"> Status
+                                <p-sortIcon [field]="'isActive'"></p-sortIcon>
+                            </th>
+                            <th class="header-class" style="width:5vw"></th>
+                        </tr>
+                        <tr>
+                            <th *ngFor="let col of cols" [ngSwitch]="col.field">
+                                <div *ngSwitchCase="'age'">
+                                    Age > {{ageFilter}}
+                                    <i (click)="ageFilter=null;dt.filter(null, col.field, col.filterMatchMode)"
+                                       *ngIf="yearFilter" class="fa fa-close" style="cursor:pointer"></i>
+                                    <p-slider (onChange)="dt.filter($event.value, 'age', 'gt');" [(ngModel)]="ageFilter"
+                                              [max]="100" [min]="0"
+                                              [style]="{'width':'100%','margin-top':'8px'}"></p-slider>
+                                </div>
+                                <input (input)="dt.filter($event.target.value, col.field, 'contains')"
+                                       *ngSwitchCase="'id'" pInputText type="text">
+
+                                <input (input)="dt.filter($event.target.value, col.field, 'contains')" *ngSwitchDefault
+                                       pInputText type="text">
+                                <p-multiSelect (onChange)="dt.filter($event.value, col.field, 'in')"
+                                               *ngSwitchCase="'isActive'" [(ngModel)]="selectedOption" [filter]="false"
+                                               [options]="statusTypes"
+                                               [style]="{'width':'100%','padding':'0px'}"></p-multiSelect>
+                            </th>
+                            <th></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template let-columns="columns" let-rowData pTemplate="body">
+                        <tr *ngIf="!cmsReportFlag">
+                            <td (click)="copytoCreator(rowData['id'], 1)" *ngFor="let col of columns"
+                                [ngSwitch]="col.field" pTooltip="Click to open in editor" style="cursor: pointer;">
+                                <span *ngSwitchCase="'isActive'">
+                                    <i *ngIf="rowData['isActive'] != 'N'" class="text-primary">Active</i>
+                                    <i *ngIf="rowData['isActive'] == 'N'" class="text-danger">Decommission</i>
+                                </span>
+                                <span *ngSwitchCase="'name'">
+                                        {{rowData[col.field]}} <img *ngIf="rowData['certified'] == 'Y'" height="17px"
+                                                                    src="assets/images/certificate.png" width="17px">
+                                </span>
+                                <span *ngSwitchDefault>
+                                    {{rowData[col.field]}}
+                                </span>
+                            </td>
+                            <td>
+                                <i (click)="copytoCreator(rowData['id'], 2)" *ngxPermissionsOnly="['6W']"
+                                   class="fa fa-copy" pTooltip="Create Copy" style="cursor: pointer;"></i>&nbsp;
+                                <span [ngSwitch]="rowData['name']">
+                                <a *ngSwitchCase="'Immunizations for Adolescents'" [attr.target]="target"
+                                   [routerLink]="['/frame-url','http://192.168.184.70/views/IMAPerformanceDashboard/MeasureDetails_IMA?iframeSizedToWindow=true&:embed=y&:showAppBanner=false&:display_count=no&:showVizHome=no']"><i
+                                    class="fa fa-pie-chart" pTooltip="Dashboard"></i></a>
+                                <a *ngSwitchCase="'Comprehensive Diabetes Care'" [attr.target]="target"
+                                   [routerLink]="['/frame-url','http://192.168.184.70/t/CurisSite/views/CDCPerformanceDashboard/MeasureDetails_CDC?:embed=y&:showAppBanner=false&:showShareOptions=true&:display_count=no&:showVizHome=no']"><i
+                                    class="fa fa-pie-chart" pTooltip="Dashboard"></i></a>
+                                <a *ngSwitchCase="'Controlling High Blood Pressure'" [attr.target]="target"
+                                   [routerLink]="['/frame-url','http://192.168.184.70/views/CBPPerformanceDashboard/MeasureDetails_CBP?iframeSizedToWindow=true&:embed=y&:showAppBanner=false&:display_count=no&:showVizHome=no']"><i
+                                    class="fa fa-pie-chart" pTooltip="Dashboard"></i></a>
+                                <a *ngSwitchCase="'Breast Cancer Screening'" [attr.target]="target"
+                                   [routerLink]="['/frame-url','http://192.168.184.70/views/BCSPerformanceDashboard/MeasureDetails_BCS?iframeSizedToWindow=true&:embed=y&:showAppBanner=false&:display_count=no&:showVizHome=no']"><i
+                                    class="fa fa-pie-chart" pTooltip="Dashboard"></i></a>
+                                <i *ngSwitchDefault class="fa fa-pie-chart" pTooltip="Dashboard"></i>
+                            </span>
+
+                            </td>
+                        </tr>
+                        <tr *ngIf="cmsReportFlag">
+                            <td *ngFor="let col of columns" [ngSwitch]="col.field" style="cursor: pointer;">
+                                <span *ngSwitchCase="'isActive'">
+                                    <i *ngIf="rowData['isActive'] != 'N'" class="text-primary">Active</i>
+                                    <i *ngIf="rowData['isActive'] == 'N'" class="text-danger">Decommission</i>
+                                </span>
+                                <span *ngSwitchCase="'name'">
+                                        {{rowData[col.field]}} <img *ngIf="rowData['certified'] == 'Y'" height="17px"
+                                                                    src="assets/images/certificate.png" width="17px">
+                                </span>
+                                <span *ngSwitchDefault>
+                                    {{rowData[col.field]}}
+                                </span>
+                            </td>
+                            <td>
+                            <span [ngSwitch]="rowData['name']">
+                                <a *ngSwitchCase="'Summary Grievances'" [attr.target]="target"
+                                   [routerLink]="['/frame-url','http://192.168.184.70/views/SummaryGrievancesPartCReportingDashboard/Dashboard1?iframeSizedToWindow=true&:embed=y&:showAppBanner=false&:display_count=no&:showVizHome=no']"><i
+                                    class="fa fa-pie-chart" pTooltip="Report"></i></a>
+                                <a *ngSwitchCase="'Standard Pre-service Organization Determinations (SOD)'"
+                                   [attr.target]="target"
+                                   [routerLink]="['/frame-url','http://192.168.184.70/views/StandardPre-serviceOrganizationDeterminationsSODPartCReportingDashboard/Dashboard1?iframeSizedToWindow=true&:embed=y&:showAppBanner=false&:display_count=no&:showVizHome=no']"><i
+                                    class="fa fa-pie-chart" pTooltip="Report"></i></a>
+                                <a *ngSwitchCase="'Expedited Pre-service Organization Determinations (EOD)'"
+                                   [attr.target]="target"
+                                   [routerLink]="['/frame-url','http://192.168.184.70/views/ExpeditedPre-serviceOrganizationDeterminationsEODPartCReportingDashboard/Dashboard1?iframeSizedToWindow=true&:embed=y&:showAppBanner=false&:display_count=no&:showVizHome=no']"><i
+                                    class="fa fa-pie-chart" pTooltip="Report"></i></a>
+                                <a *ngSwitchCase="'Standard Coverage Determinations (SCD) Record Layout'"
+                                   [attr.target]="target"
+                                   [routerLink]="['/frame-url','http://192.168.184.70/views/StandardCoverageDeterminationsSCDPartDReportingDashboard/Dashboard1?iframeSizedToWindow=true&:embed=y&:showAppBanner=false&:display_count=no&:showVizHome=no']"><i
+                                    class="fa fa-pie-chart" pTooltip="Report"></i></a>
+                                <a *ngSwitchCase="'Standard Grievances Part D (SGD)'" [attr.target]="target"
+                                   [routerLink]="['/frame-url','http://192.168.184.70/views/StandardGrievancesPartDSGDPartDReportingDashboard/Dashboard1?iframeSizedToWindow=true&:embed=y&:showAppBanner=false&:display_count=no&:showVizHome=no']"><i
+                                    class="fa fa-pie-chart" pTooltip="Report"></i></a>
+                                <a *ngSwitchCase="'Direct Member Reimbursement (DMR) Requests'" [attr.target]="target"
+                                   [routerLink]="['/frame-url','http://192.168.184.70/views/DirectMemberReimbursementDMRRequestsPartCReportingDashboard/Dashboard1?iframeSizedToWindow=true&:embed=y&:showAppBanner=false&:display_count=no&:showVizHome=no']"><i
+                                    class="fa fa-pie-chart" pTooltip="Report"></i></a>
+                                <i *ngSwitchDefault class="fa fa-pie-chart" pTooltip="Report"></i>
+                            </span>
+
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                </p-table>
+            </div>
+        </div>
+    </div>
+</div>

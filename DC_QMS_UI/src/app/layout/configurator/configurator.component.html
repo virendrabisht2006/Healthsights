@@ -1,0 +1,357 @@
+<div style="margin: 25px;margin-top: 10px">
+    <app-page-header [heading]="'Configurator'" [icon]="'fa-table'"></app-page-header>
+    <div class="card ">
+        <div class="row p-3 ">
+            <div class="col-sm-12 col-lg-12 ">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="card-text row">
+                            <div class="col col-lg-2 col-xl-2 ">
+                                <span class="font-weight-bold">Measure Name</span> :
+                            </div>
+                            <div class="col col-lg-4 col-xl-4">
+                                <span class="font-weight-bold">Measure Category</span> :
+                            </div>
+                        </div>
+                        <div class="row card-text">
+                            <div class="col col-lg-2 col-xl-2">
+                                <span class="font-weight-bold">Program Name</span> :
+                            </div>
+                            <div class="col col-lg-2 col-xl-2">
+                                <span class="font-weight-bold">Effectiveness </span> :
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mb-3">
+                    <div class="card-body">
+
+                        <div class="card-text row">
+                            <p-tabView>
+                                <p-tabPanel header="Denominator">
+                                    <div class="row p-3 align-items-center">
+                                        <div class="col  col-lg-12">
+                                            <form [formGroup]="configForm" class="form-horizontal" method="post"
+                                                  novalidate>
+                                                <div class="form-group row">
+                                                    <div class="col-md-12" formArrayName="conditionList">
+                                                        <div *ngFor="let condRow of formConditionList.controls; let i=index;"
+                                                             class="panel panel-default">
+                                                            <div [formGroupName]="i">
+                                                                <div class="row">
+                                                        <span class="col-lg-1">
+                                                        <!-- <input type="text" class="form-control" formControlName="andOrCondition"> -->
+                                                        <p-dropdown [options]="ConditionList"
+                                                                    formControlName="andOrCondition"></p-dropdown>
+                                                        </span>
+                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <span class="col-lg-3">
+                                                        <!-- <input type="text" class="form-control" formControlName="tableName"> -->
+                                                        <p-dropdown (onChange)="filterColumn($event, i)"
+                                                                    [autoDisplayFirst]="false" [options]="TableNameList"
+                                                                    [style]="{'width':'250px'}"
+                                                                    formControlName="tableName"
+                                                                    placeholder="select TableName"></p-dropdown>
+                                                        </span>
+                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <span class="col-lg-3">
+                                                    <!--  <input type="text" class="form-control" formControlName="columnName"> -->
+                                                        <p-dropdown [autoDisplayFirst]="false"
+                                                                    [options]="ColumnNameList"
+                                                                    [style]="{'width':'250px'}"
+                                                                    formControlName="columnName"
+                                                                    placeholder="select ColumnName"></p-dropdown>
+                                                        </span>
+                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <span class="col-lg-3">
+                                                            <input class="form-control" formControlName="expression"
+                                                                   type="text">
+                                                            <br>
+                                                        </span>
+                                                                    <span *ngIf="configForm.controls.conditionList.controls.length == i+1"
+                                                                          class="col-lg-1 ">
+                                                        <button (click)="addCondition()"
+                                                                class="btn bg-primary">+</button>
+                                                        </span>
+                                                                    <span *ngIf="configForm.controls.conditionList.controls.length != i+1"
+                                                                          class="col-lg-1 ">
+                                                        <button (click)="removeCondition(i)"
+                                                                class="btn bg-secondary">-</button>
+                                                        </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        Remarks
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <textarea class="form-control" formControlName="remark"
+                                                                  rows="5"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        Expressions
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <textarea class="form-control" formControlName="expression"
+                                                                  rows="5"></textarea>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </p-tabPanel>
+                                <p-tabPanel header="Denominator Exclusion">
+                                    <div class="row p-3 align-items-center">
+                                        <div class="col  col-lg-12">
+                                            <form [formGroup]="denominatorExclusion" class="form-horizontal"
+                                                  method="post" novalidate>
+                                                <div class="form-group row">
+                                                    <div class="col-md-12" formArrayName="DEList">
+                                                        <div *ngFor="let condRow of formConditionListDE.controls; let i=index;"
+                                                             class="panel panel-default">
+                                                            <div [formGroupName]="i">
+                                                                <div class="row">
+                                                        <span class="col-lg-1">
+                                                        <!-- <input type="text" class="form-control" formControlName="andOrCondition"> -->
+                                                        <p-dropdown [options]="ConditionList"
+                                                                    formControlName="andOrConditionDE"></p-dropdown>
+                                                        </span>
+                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <span class="col-lg-3">
+                                                        <!-- <input type="text" class="form-control" formControlName="tableName"> -->
+                                                        <p-dropdown (onChange)="filterColumn($event, i)"
+                                                                    [autoDisplayFirst]="false" [options]="TableNameList"
+                                                                    [style]="{'width':'250px'}"
+                                                                    formControlName="tableNameDE"
+                                                                    placeholder="select TableName"></p-dropdown>
+                                                        </span>
+                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <span class="col-lg-3">
+                                                    <!--  <input type="text" class="form-control" formControlName="columnName"> -->
+                                                        <p-dropdown [autoDisplayFirst]="false"
+                                                                    [options]="ColumnNameList"
+                                                                    [style]="{'width':'250px'}"
+                                                                    formControlName="columnNameDE"
+                                                                    placeholder="select ColumnName"></p-dropdown>
+                                                        </span>
+                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <span class="col-lg-3">
+                                                            <input class="form-control" formControlName="expressionDE"
+                                                                   type="text">
+                                                            <br>
+                                                        </span>
+                                                                    <span *ngIf="denominatorExclusion.controls.DEList.controls.length == i+1"
+                                                                          class="col-lg-1 ">
+                                                        <button (click)="addConditionDE()"
+                                                                class="btn bg-primary">+</button>
+                                                        </span>
+                                                                    <span *ngIf="denominatorExclusion.controls.DEList.controls.length != i+1"
+                                                                          class="col-lg-1 ">
+                                                        <button (click)="removeConditionDE(i)" class="btn bg-secondary">-</button>
+                                                        </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        Remarks
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <textarea class="form-control" formControlName="remarkDE"
+                                                                  rows="5"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        Expressions
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <textarea class="form-control" formControlName="expressionDE"
+                                                                  rows="5"></textarea>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </p-tabPanel>
+                                <p-tabPanel header="Numerator">
+                                    <div class="row p-3 align-items-center">
+                                        <div class="col  col-lg-12">
+                                            <form [formGroup]="numerator" class="form-horizontal" method="post"
+                                                  novalidate>
+                                                <div class="form-group row">
+                                                    <div class="col-md-12" formArrayName="NList">
+                                                        <div *ngFor="let condRow of formConditionListN.controls; let i=index;"
+                                                             class="panel panel-default">
+                                                            <div [formGroupName]="i">
+                                                                <div class="row">
+                                                        <span class="col-lg-1">
+                                                        <!-- <input type="text" class="form-control" formControlName="andOrCondition"> -->
+                                                        <p-dropdown [options]="ConditionList"
+                                                                    formControlName="andOrConditionN"></p-dropdown>
+                                                        </span>
+                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <span class="col-lg-3">
+                                                        <!-- <input type="text" class="form-control" formControlName="tableName"> -->
+                                                        <p-dropdown (onChange)="filterColumn($event, i)"
+                                                                    [autoDisplayFirst]="false" [options]="TableNameList"
+                                                                    [style]="{'width':'250px'}"
+                                                                    formControlName="tableNameN"
+                                                                    placeholder="select TableName"></p-dropdown>
+                                                        </span>
+                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <span class="col-lg-3">
+                                                    <!--  <input type="text" class="form-control" formControlName="columnName"> -->
+                                                        <p-dropdown [autoDisplayFirst]="false"
+                                                                    [options]="ColumnNameList"
+                                                                    [style]="{'width':'250px'}"
+                                                                    formControlName="columnNameN"
+                                                                    placeholder="select ColumnName"></p-dropdown>
+                                                        </span>
+                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <span class="col-lg-3">
+                                                            <input class="form-control" formControlName="expressionN"
+                                                                   type="text">
+                                                            <br>
+                                                        </span>
+                                                                    <span *ngIf="numerator.controls.NList.controls.length == i+1"
+                                                                          class="col-lg-1 ">
+                                                        <button (click)="addConditionN()"
+                                                                class="btn bg-primary">+</button>
+                                                        </span>
+                                                                    <span *ngIf="numerator.controls.NList.controls.length != i+1"
+                                                                          class="col-lg-1 ">
+                                                        <button (click)="removeConditionN(i)"
+                                                                class="btn bg-secondary">-</button>
+                                                        </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        Remarks
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <textarea class="form-control" formControlName="remarkN"
+                                                                  rows="5"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        Expressions
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <textarea class="form-control" formControlName="expressionN"
+                                                                  rows="5"></textarea>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </p-tabPanel>
+                                <p-tabPanel header="Numerator Exclusion">
+                                    <div class="row p-3 align-items-center">
+                                        <div class="col  col-lg-12">
+                                            <form [formGroup]="numeratorExclusion" class="form-horizontal" method="post"
+                                                  novalidate>
+                                                <div class="form-group row">
+                                                    <div class="col-md-12" formArrayName="NEList">
+                                                        <div *ngFor="let condRow of formConditionListNE.controls; let i=index;"
+                                                             class="panel panel-default">
+                                                            <div [formGroupName]="i">
+                                                                <div class="row">
+                                                        <span class="col-lg-1">
+                                                        <!-- <input type="text" class="form-control" formControlName="andOrCondition"> -->
+                                                        <p-dropdown [options]="ConditionList"
+                                                                    formControlName="andOrConditionNE"></p-dropdown>
+                                                        </span>
+                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <span class="col-lg-3">
+                                                        <!-- <input type="text" class="form-control" formControlName="tableName"> -->
+                                                        <p-dropdown (onChange)="filterColumn($event, i)"
+                                                                    [autoDisplayFirst]="false" [options]="TableNameList"
+                                                                    [style]="{'width':'250px'}"
+                                                                    formControlName="tableNameNE"
+                                                                    placeholder="select TableName"></p-dropdown>
+                                                        </span>
+                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <span class="col-lg-3">
+                                                    <!--  <input type="text" class="form-control" formControlName="columnName"> -->
+                                                        <p-dropdown [autoDisplayFirst]="false"
+                                                                    [options]="ColumnNameList"
+                                                                    [style]="{'width':'250px'}"
+                                                                    formControlName="columnNameNE"
+                                                                    placeholder="select ColumnName"></p-dropdown>
+                                                        </span>
+                                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <span class="col-lg-3">
+                                                            <input class="form-control" formControlName="expressionNE"
+                                                                   type="text">
+                                                            <br>
+                                                        </span>
+                                                                    <span *ngIf="numeratorExclusion.controls.NEList.controls.length == i+1"
+                                                                          class="col-lg-1 ">
+                                                        <button (click)="addConditionNE()"
+                                                                class="btn bg-primary">+</button>
+                                                        </span>
+                                                                    <span *ngIf="numeratorExclusion.controls.NEList.controls.length != i+1"
+                                                                          class="col-lg-1 ">
+                                                        <button (click)="removeConditionNE(i)" class="btn bg-secondary">-</button>
+                                                        </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        Remarks
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <textarea class="form-control" formControlName="remarkNE"
+                                                                  rows="5"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-md-2">
+                                                        Expressions
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <textarea class="form-control" formControlName="expressionNE"
+                                                                  rows="5"></textarea>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </p-tabPanel>
+                                <p-tabPanel header="New">
+                                    <!-- <query-builder [(ngModel)]='query' [config]='config'></query-builder> -->
+                                </p-tabPanel>
+                            </p-tabView>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-lg-12">
+                <button (click)="OnSubmit()" class="ui-button-primary" label="Submit" pButton style="float: right"
+                        type="button"></button>
+                <button class="ui-button-secondary" label="Clear" pButton style="float: right;margin-right: .25em"
+                        type="button"></button>
+            </div>
+
+        </div>
+    </div>
+
+</div>

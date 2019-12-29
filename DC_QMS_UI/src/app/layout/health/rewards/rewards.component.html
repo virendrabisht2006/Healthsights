@@ -1,0 +1,137 @@
+<div class="col-lg-12" style="padding: 0px">
+    <h2 [ngStyle]="{ 'background-color': '#F26363',
+        'height': '59px','color':'white','padding': '10px'}"><i aria-hidden="true" class="fa fa-gift"></i> Rewards
+        Recommendations</h2>
+</div>
+<div class="row p-3 align-items-center">
+    <div class="row col-lg-12" style=" margin-left: 13px;">
+        <!-- <div class="col-lg-12" style="margin-bottom: 12px">
+                <h2>Rewards Recommendations</h2>
+                <hr class="lineClass">
+        </div> -->
+        <div class="card">
+            <div class="row col-lg-12 card-body" style=" padding: 40px;">
+                <div class="row col-lg-12">
+                                <span class="col-lg-12 no-padding-class">
+                                        <b>Select MID &nbsp;</b> 
+                                        <p-autoComplete (completeMethod)="search($event)"
+                                                        (onSelect)="loadMemberInfo($event)" [forceSelection]="true"
+                                                        [suggestions]="memberList" id="hf-member" name="hf-member"
+                                                        placeholder="Enter MID"></p-autoComplete>
+                                </span>
+                </div>
+                <br><br>
+                <div class="row col-lg-12">
+
+                                <span class="col-lg-3 no-padding-class">
+                                        <b>Name : </b>{{gaps?.name}} &nbsp;
+                                </span>
+                    <span class="col-lg-2 no-padding-class">
+                                        <b>Age : </b>{{personaData?.age}} &nbsp;
+                                </span>
+                    <span class="col-lg-2 no-padding-class">
+                                        <b>Gender : </b>{{gaps?.gender}} &nbsp;
+                                </span>
+                    <span class="col-lg-2 no-padding-class">
+                                        <b>Weight : </b>{{personaData?.weight}} &nbsp;
+                                </span>
+                </div>
+                <br><br>
+                <div class="row col-lg-12">
+                                <span class="col-lg-3 no-padding-class">
+                                <b>Persona : </b>{{personaData?.personaName}} &nbsp;
+                                </span>
+                    <span class="col-lg-3 no-padding-class">
+                                        <b>Preferred Reward : </b>{{personaData?.rewards}} &nbsp;
+                                </span>
+                    <span class="col-lg-4 no-padding-class">
+                                        <b>Motivations : </b>{{personaData?.motivations}}
+                                </span>
+                </div>
+                <br><br>
+                <div class="col-lg-12 no-padding-class">
+                    <p-table #dt [columns]="cols" [scrollable]="false" [value]="rewardTable"
+                             class="table table-bordered table-hover table-style" dataKey="memberId"
+                             selectionMode="single">
+                        <ng-template let-columns pTemplate="header">
+                            <tr class="headings">
+                                <th>Goal</th>
+                                <th>Frequency</th>
+                                <th>Date</th>
+                                <th>Recommendation 1</th>
+                                <th>Recommendation 2</th>
+                                <th>Recommendation 3</th>
+                                <th>Others</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template let-columns="columns" let-rowData pTemplate="body">
+                            <tr>
+                                <td *ngFor="let col of columns" [ngSwitch]="col.field">
+                                                        <span *ngSwitchDefault>
+                                                                {{rowData[col.field]}}
+                                                        </span>
+                                    <span *ngSwitchCase="'reward1'">
+                                                               {{rowData[col.field]}}
+                                        <!-- <p-radioButton name="" value="val1" [(ngModel)]="rewards1"></p-radioButton>{{rowData[col.field]}} -->
+                                                        </span>
+                                    <span *ngSwitchCase="'reward2'">
+                                                               {{rowData[col.field]}}
+                                        <!-- <p-radioButton name="groupname" value="val2" [(ngModel)]="rewards1"></p-radioButton>{{rowData[col.field]}} -->
+                                                        </span>
+                                    <span *ngSwitchCase="'reward3'">
+                                                                {{rowData[col.field]}}
+                                        <!-- <p-radioButton name="groupname" value="val3" [(ngModel)]="rewards1"></p-radioButton>{{rowData[col.field]}} -->
+                                                        </span>
+                                    <span *ngSwitchCase="'recommendedReward'">
+                                                                <p-dropdown [autoDisplayFirst]="false"
+                                                                            [options]="othersList"
+                                                                            [style]="{'width':'80%', 'border': '1px solid #ABACAD','padding':'0px'}"
+                                                                            placeholder="select reward"
+                                                                            styleClass="form-control"></p-dropdown>
+                                                        </span>
+                                    <!-- <td><p-radioButton name="groupname" value="val1" [(ngModel)]="rewards1"></p-radioButton></td>
+                                    <td><p-radioButton name="groupname" value="val1" [(ngModel)]="rewards2"></p-radioButton></td>
+                                    <td><p-radioButton name="groupname" value="val1" [(ngModel)]="rewards3"></p-radioButton></td>
+                                    <td><p-dropdown [options]="othersList"  placeholder="select" [autoDisplayFirst]="false"  styleClass="form-control"   [style]="{'width':'70%', 'border': '1px solid #ABACAD','padding':'0px'}"></p-dropdown></td> -->
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <!-- <table class="table table-bordered table-hover table-style">
+                            <thead>
+                                    <tr class="headings">
+                                            <th>Goal</th>
+                                            <th>Frequency</th>
+                                            <th>Date</th>
+                                            <th>Reward1</th>
+                                            <th>Reward2</th>
+                                            <th>Reward3</th>
+                                            <th>Others</th>
+                                    </tr>
+                            </thead>
+                            <tbody>
+                                    <tr>
+                                            <td></td><td></td><td></td>
+                                            <td><p-radioButton name="groupname" value="val1" [(ngModel)]="rewards1"></p-radioButton></td>
+                                            <td><p-radioButton name="groupname" value="val1" [(ngModel)]="rewards2"></p-radioButton></td>
+                                            <td><p-radioButton name="groupname" value="val1" [(ngModel)]="rewards3"></p-radioButton></td>
+                                            <td><p-dropdown [options]="othersList"  placeholder="select" [autoDisplayFirst]="false"  styleClass="form-control"   [style]="{'width':'70%', 'border': '1px solid #ABACAD','padding':'0px'}"></p-dropdown></td>
+                                    </tr>
+
+                            </tbody>
+                    </table> -->
+                </div>
+            </div>
+            <div class="card-footer text-right">
+                <button [routerLink]="['/health/rewards-member-list']" class="btn btn-primary"
+                        style="margin-right: 10px">View Member List
+                </button>
+                <button (click)="onSubmit()" class="btn btn-primary" type="submit"><i class="fa fa-dot-circle-o"></i>
+                    Submit
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+</div>

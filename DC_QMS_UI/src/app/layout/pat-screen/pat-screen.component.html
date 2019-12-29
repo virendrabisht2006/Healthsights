@@ -1,0 +1,218 @@
+<div style="margin: 25px;margin-top: 10px">
+    <app-page-header [heading]="'Measure Improvement Tool '" [icon]="'fa-table'"></app-page-header>
+    <div class="card ">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form [formGroup]="myForm" class="form-horizontal" method="post" novalidate>
+                            <div class="form-group">
+                                <div class="row"><span class="col-lg-12 font-weight-bold" style="font-size: large">Population and Care Gap</span>
+                                </div>
+                                <hr class="lineClass">
+                                <br>
+                                <div class=" row">
+                                    <span class="col-lg-3 col-md-3 col-form-label font-weight-bold" for="hf-population">Population</span>
+                                    <span class="col-lg-3 col-md-3 col-form-label font-weight-bold" for="hf-measure">Measure</span>
+                                </div>
+                                <div class="row">
+                        <span class="col-lg-3 col-md-3">
+                            <p-dropdown [autoDisplayFirst]="false" [options]="populationList"
+                                        [style]="{'width':'100%', 'border': '1px solid #ABACAD','padding':'0px'}"
+                                        formControlName="population" placeholder="Select"
+                                        styleClass="form-control"></p-dropdown>
+                        </span>
+                                    <span class="col-lg-3 col-md-3">
+                            <p-dropdown (onChange)="filterMeasure($event)" [autoDisplayFirst]="false"
+                                        [options]="measureList"
+                                        [style]="{'width':'100%', 'border': '1px solid #ABACAD','padding':'0px'}"
+                                        formControlName="measure" placeholder="Select"
+                                        styleClass="form-control"></p-dropdown>
+                        </span>
+                                </div>
+                                <div class="row">
+                            <span class="col-lg-3 col-md-3">
+                                <small *ngIf="!myForm.controls.population.valid && myForm.controls.population.touched"
+                                       class="text-danger">
+                                        Population is required.
+                                </small>
+                            </span>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="form-group">
+                                <div class="row"><span class="col-lg-12 font-weight-bold" style="font-size: large">Search Patient</span>
+                                </div>
+                                <hr class="lineClass">
+                                <br>
+                                <div class=" row">
+                                    <div class="col-lg-3 col-md-3">
+                                        <div class="row">
+                                            <span class="col-lg-12 col-form-label font-weight-bold"
+                                                  for="hf-associatedPList">Associated patient list</span>
+                                        </div>
+                                        <div class="row col-lg-12">
+                                            <p-autoComplete (completeMethod)="search($event)"
+                                                            (onSelect)="loadMemberInfo($event)" [forceSelection]="true"
+                                                            [suggestions]="memberList" formControlName="patientId"
+                                                            id="hf-member" name="hf-member"
+                                                            placeholder="Enter Name or MRN"></p-autoComplete>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <span class="col-lg-12 row"><b>Name :</b> {{gaps?.name}}</span>
+                                        <span class="col-lg-12 row"><b>MRN :</b> {{mrn}}</span>
+                                        <div class="row">
+                                            <span class="col-lg-3 col-md-3"><b>Gender :</b> {{gaps?.gender}}</span>
+                                            <span class="col-lg-5"><b>DoB :</b> {{gaps?.dateOfBirthSk}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <span class="col-lg-12 row"><b>PCP Name :</b> {{gaps?.pcpName}}</span>
+                                        <span class="col-lg-12 row"><b>Compliant :</b> {{gaps?.compliant}}</span>
+                                        <span class="col-lg-12 row"><b>Next Appointement Date :</b> {{gaps?.nextAppointmentDate}}</span>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="form-group">
+                                <div class="row"><span class="col-lg-12 font-weight-bold" style="font-size: large">Action on Care Gap</span>
+                                </div>
+                                <hr class="lineClass">
+                                <br>
+                                <div class="row">
+                                    <span class="col-lg-3 col-md-3 col-form-label font-weight-bold"
+                                          for="hf-patientStatus">Patient Status</span>
+                                    <span class="col-lg-3 col-md-3 col-form-label font-weight-bold" for="hf-valueSet">Value Set</span>
+                                    <span class="col-lg-3 col-md-3 col-form-label font-weight-bold" for="hf-codeType">Code Type</span>
+                                    <span class="col-lg-3 col-md-3 col-form-label font-weight-bold"
+                                          for="hf-codes">Codes</span>
+                                </div>
+                                <div class="row">
+                            <span class="col-lg-3 col-md-3">
+                                <p-dropdown (onChange)="filterPatientStatus($event)" [autoDisplayFirst]="false"
+                                            [options]="patientStatusList"
+                                            [style]="{'width':'100%', 'border': '1px solid #ABACAD','padding':'0px'}"
+                                            formControlName="patientStatus" placeholder="Select"
+                                            styleClass="form-control"></p-dropdown>
+                            </span>
+                                    <span class="col-lg-3 col-md-3">
+                                <p-dropdown (onChange)="filterValueSet($event)" [autoDisplayFirst]="false"
+                                            [options]="valueList"
+                                            [style]="{'width':'100%', 'border': '1px solid #ABACAD','padding':'0px'}"
+                                            formControlName="valueSet" placeholder="Select"
+                                            styleClass="form-control"></p-dropdown>
+                            </span>
+                                    <span class="col-lg-3 col-md-3">
+                                <p-dropdown (onChange)="filterCodeType($event)" [autoDisplayFirst]="false"
+                                            [options]="codeTypeList"
+                                            [style]="{'width':'100%', 'border': '1px solid #ABACAD','padding':'0px'}"
+                                            formControlName="codeType" placeholder="Select"
+                                            styleClass="form-control"></p-dropdown>
+                            </span>
+                                    <span class="col-lg-3 col-md-3">
+                                <p-dropdown [autoDisplayFirst]="false" [options]="codesList"
+                                            [style]="{'width':'100%', 'border': '1px solid #ABACAD','padding':'0px'}"
+                                            formControlName="codes" placeholder="Select"
+                                            styleClass="form-control"></p-dropdown>
+                            </span>
+                                </div>
+                                <div class="row">
+                            <span class="col-lg-3 col-md-3">
+                                <small *ngIf="!myForm.controls.patientStatus.valid && myForm.controls.patientStatus.touched"
+                                       class="text-danger">
+                                    Patient Status is required.
+                                </small>
+                            </span>
+                                </div>
+                                <div class="row">
+                                    <span class="col-lg-6 col-form-label font-weight-bold" for="hf-reason">Reason</span>
+                                    <span *ngIf="patientDateRate"
+                                          class="col-lg-3 col-md-3 col-form-label font-weight-bold"
+                                          for="hf-patientDeathRate">Patient Death Rate</span>
+                                </div>
+                                <div class="row">
+                           <span class="col-lg-6">
+                                <textarea class="form-control" formControlName="reason" rows="3" type="text"></textarea>
+                            </span>
+
+                                    <span *ngIf="patientDateRate" class="col-lg-3 col-md-3">
+                                <p-calendar [showIcon]="true" dateFormat="dd-mm-yy"
+                                            formControlName="patientDeathRate"></p-calendar>
+                            </span>
+                                </div>
+                                <div class="row">
+                            <span class="col-lg-5" style="margin-top: 10px">
+                                    <input #fileInput (change)="myUploader($event)" id="file" type="file">
+                            </span>
+                                </div>
+
+                            </div>
+                            <!-- <hr>
+                            <div class="form-group">
+                                <div class="row"><span class="col-lg-12 font-weight-bold" style="font-size: large">Patient Vitals</span></div>
+                                <hr class="lineClass">
+                                <br>
+                                <div class="row">
+                                    <span class="col-lg-3 col-form-label font-weight-bold" for="hf-bpSystolic">BP Systolic</span>
+                                    <span class="col-lg-3 col-form-label font-weight-bold" for="hf-bpDiastolic">BP Diastolic</span>
+                                    <span class="col-lg-3 col-form-label font-weight-bold" for="hf-bmi">BMI</span>
+                                </div>
+                                <div class="row">
+                                    <span class="col-lg-3">
+                                        <input type="text" class="form-control" formControlName="bpSystolic">
+                                    </span>
+                                    <span class="col-lg-3">
+                                        <input type="text" class="form-control" formControlName="bpDiastolic">
+                                    </span>
+                                    <span class="col-lg-3">
+                                        <input type="text" class="form-control" formControlName="bmi">
+                                    </span>
+
+                                </div>
+                            </div> -->
+
+                        </form>
+                        <p-panel [collapsed]="true" [toggleable]="true" header="History">
+                            <ng-container *ngTemplateOutlet="remainingDataPanel"></ng-container>
+                        </p-panel>
+                        <ng-template #remainingDataPanel>
+                            <p-table #dt [columns]="cols" [scrollable]="false" [value]="patData"
+                                     class="table table-bordered table-hover styletable" dataKey="id"
+                                     selectionMode="single">
+                                <ng-template pTemplate="header">
+                                    <tr class="header-class">
+                                        <th *ngFor="let col of cols" class="header-class">
+                                            {{col.header}}
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template let-columns="columns" let-rowData pTemplate="body">
+                                    <tr>
+                                        <td *ngFor="let col of columns" [ngSwitch]="col.field">
+                                                <span (click)="downloadFile(rowData)" *ngSwitchCase="'uploadFilesList'">
+                                                        <span *ngIf="rowData.uploadFilesList[0]"><i aria-hidden="true"
+                                                                                                    class="fa fa-file-excel-o"></i></span>
+                                                </span>
+                                            <span *ngSwitchDefault>{{rowData[col.field]}}</span>
+                                        </td>
+                                    </tr>
+
+                                </ng-template>
+                            </p-table>
+                        </ng-template>
+                    </div>
+                    <div class="text-right" style="margin: 5px">
+                        <button (click)="onSubmit()" class="btn btn-primary" type="submit">
+                            <i class="fa fa-dot-circle-o"></i> Submit
+                        </button>&nbsp;&nbsp;
+                        <button (click)="cancelPc()" class="btn btn-primary" type="reset">
+                            <i class="fa fa-ban"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

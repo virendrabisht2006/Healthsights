@@ -1,0 +1,45 @@
+<header class="app-header navbar">
+    <ng-template [ngIf]="mobileSidebarToggler != false">
+        <button appSidebarToggler class="navbar-toggler d-lg-none" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </ng-template>
+    <ng-template [ngIf]="navbarBrand || navbarBrandFull || navbarBrandMinimized">
+        <a class="navbar-brand" href="#">
+            <img *ngIf="navbarBrand"
+                 [attr.alt]="imgAlt(navbarBrand)"
+                 [attr.height]="imgHeight(navbarBrand)"
+                 [attr.width]="imgWidth(navbarBrand)"
+                 [src]="imgSrc(navbarBrand)"
+                 class="navbar-brand">
+            <img *ngIf="navbarBrandFull"
+                 [attr.alt]="imgAlt(navbarBrandFull)"
+                 [attr.height]="imgHeight(navbarBrandFull)"
+                 [attr.width]="imgWidth(navbarBrandFull)"
+                 [src]="imgSrc(navbarBrandFull)"
+                 class="navbar-brand-full">
+            <img *ngIf="navbarBrandMinimized"
+                 [attr.alt]="imgAlt(navbarBrandMinimized)"
+                 [attr.height]="imgHeight(navbarBrandMinimized)"
+                 [attr.width]="imgWidth(navbarBrandMinimized)"
+                 [src]="imgSrc(navbarBrandMinimized)"
+                 class="navbar-brand-minimized">
+        </a>
+    </ng-template>
+    <ng-template [ngIf]="sidebarToggler != false">
+        <button [appSidebarToggler]="sidebarToggler" class="navbar-toggler d-md-down-none" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </ng-template>
+    <ng-content></ng-content>
+    <!-- <ng-template [ngIf]="asideMenuToggler != false">
+      <button class="navbar-toggler d-md-down-none" type="button" [appAsideMenuToggler]="asideMenuToggler">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </ng-template> -->
+    <!-- <ng-template [ngIf]="mobileAsideMenuToggler != false">
+      <button class="navbar-toggler d-lg-none" type="button" appAsideMenuToggler>
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </ng-template> -->
+</header>

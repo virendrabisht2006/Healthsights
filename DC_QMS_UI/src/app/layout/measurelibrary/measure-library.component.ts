@@ -1,0 +1,112 @@
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {routerTransition} from '../../router.animations';
+import {ActivatedRoute, Router} from '@angular/router';
+import {GapsService} from '../../shared/services/gaps.service';
+import {NgxPermissionsService} from 'ngx-permissions';
+
+@Component({
+    selector: 'app-tables',
+    templateUrl: './measure-library.component.html',
+    styleUrls: ['./measure-library.component.scss'],
+    animations: [routerTransition()],
+    providers: [GapsService]
+})
+export class MeasurelibraryComponent implements OnInit {
+    @ViewChild('dt') dt: any;
+    programType = 'test';
+    programValue = 'test';
+    perms: any;
+    flag: any;
+    statusTypes = [{label: 'Active', value: 'Y'}, {label: 'Decommission', value: 'N'}];
+    selectedOption = ['Y'];
+    certifiedData: any;
+    HEDIS: boolean = false;
+    dropdownOptions = [{label: 'NCQA Certified', value: 'certified'}, {label: 'All', value: 'all'}]
+    membergaps: any[];
+    cols: any[];
+
+    constructor(private gapsService: GapsService, private route: ActivatedRoute, public router: Router, private permissionsService: NgxPermissionsService,) {
+        this.route.params.subscribe(params => {
+            if (params['type']) {
+                this.programType = params['type'];
+            }
+            if (params['value']) {
+                this.programValue = params['value'];
+            }
+        });
+    }
+
+    ngOnInit() {
+        this.dt.filters = {
+            isActive: {value: 'Y'}
+        };
+        this.dt.filter(null, null, null);
+        // let arrayOfValues=['Y'];
+        // this.selectedOption = this.statusTypes.filter(a => arrayOfValues.includes(a.value)).map(a => a.value);
+        // console.log(this.selectedOption)
+        if (this.programValue == "The Healthcare Effectiveness Data and Information Set (HEDIS)") {
+            this.HEDIS = true;
+        } else if (this.programValue == "test") {
+            this.HEDIS = true;
+        } else {
+            this.HEDIS = false;
+        }
+        this.certifiedData = [];
+        this.gapsService.getLibrary(this.programType, this.programValue).subscribe((data: any[]) => {
+            this.membergaps = data;
+        });
+        this.cols = [
+            {field: 'id', header: 'Measure ID'},
+            {field: 'name', header: 'Measure Name'},
+            {field: 'programName', header: 'Program Name'},
+            {field: 'type', header: 'Measure Type'},
+            {field: 'steward', header: 'Measure Steward'},
+            {field: 'clinocalCondition', header: 'Clinical Condition'},
+            {field: 'isActive', header: 'Status'},
+        ];
+        this.permissionsService.permissions$.subscribe((permissions) => {
+            this.perms = permissions;
+        });
+        //   console.log(this. selectedOption);
+    }
+
+    copytoCreator(id, newType) {
+
+        if (this.perms['6W']) {
+            if (this.perms['5R']) {
+                this.router.navigate(['/measurecreator', id, newType]);
+            }
+        }
+
+    }
+
+    filterCategory(event) {
+        // console.log(event.value)
+        if (event.value == "certified") {
+            this.gapsService.getLibrary(this.programType, this.programValue).subscribe((data: any[]) => {
+                this.membergaps = [];
+                data.forEach(element => {
+                    if (element.certified == 'Y') {
+                        this.membergaps.push({
+                            id: element.id,
+                            name: element.name,
+                            programName: element.programName,
+                            type: element.type,
+                            steward: element.steward,
+                            clinocalCondition: element.clinocalCondition,
+                            isActive: element.isActive,
+                            certified: element.certified
+                        })
+                    }
+                });
+                //  console.log(this.membergaps)
+            });
+        } else {
+            this.gapsService.getLibrary(this.programType, this.programValue).subscribe((data: any[]) => {
+                this.membergaps = data;
+            });
+        }
+    }
+
+
+}

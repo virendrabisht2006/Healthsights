@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="ncqaoutputcreation_2.11-0.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/NCQA/NcqaOutputCreation/target/scala-2.11/ncqaoutputcreation_2.11-0.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

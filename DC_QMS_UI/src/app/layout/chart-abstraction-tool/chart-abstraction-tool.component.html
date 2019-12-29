@@ -1,0 +1,211 @@
+<div *ngIf="abstucttemplate == 'search'" style="margin-top: 10px;padding-left: 30px">
+    <app-page-header [heading]="'Chart Abstraction Tool'" [icon]="'fa-table'"></app-page-header>
+
+    <div class="card abstuctContainer">
+        <div class="col col-lg-12"><b><h4>Search Patient</h4></b></div>
+        <div *ngIf="noPatients" class="row" style="margin: 30px;padding-top:30px;">
+            <div class="col col-lg-12">
+                No Records Found!
+                <button (click)="backToLogin('nodata');" label="Go Back" pButton
+                        style="display: block;margin-left: 14px;margin-top: 10px;" type="button"></button>
+            </div>
+
+        </div>
+        <div *ngIf="!noPatients" class="row" style="margin: 30px;padding-top:30px;">
+
+
+            <div class="col col-lg-12">
+
+                <div class="form-group row">
+                    <label class="col-sm-5 col-form-label" for="hf-member"><b>Patient ID:</b></label>
+                    <div class="col-sm-7">
+                        <p-autoComplete (completeMethod)="search($event)" (onSelect)="loadPatientInfo($event)"
+                                        [(ngModel)]="memberID" [forceSelection]="true" [suggestions]="memberList"
+                                        id="hf-member1" name="hf-member1" placeholder="Enter ID"></p-autoComplete>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-5 col-form-label" for="hf-member"><b>Patient Name:</b></label>
+                    <div class="col-sm-7">
+                        <p-autoComplete (completeMethod)="search($event)" (onSelect)="loadPatientInfo($event)"
+                                        [(ngModel)]="memberName" [forceSelection]="true" [suggestions]="memberList"
+                                        id="hf-member2" name="hf-member2" placeholder="Enter Name"></p-autoComplete>
+                    </div>
+                </div>
+                <div class="col col-lg-12 mar-left-20">
+                    <button (click)="searchPatient();" icon="fa fa-search" label="Search" pButton style="float: right"
+                            type="button"></button>
+                    <br><br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Patient list view-->
+<div *ngIf="abstucttemplate == 'Patientlist'" style="margin-top: 10px">
+    <app-page-header [heading]="'Chart Abstraction Tool'" [icon]="'fa-table'"></app-page-header>
+    <div class="chart-abstraction-tool-3 justify-content-md-center">
+        <div class="col col-lg-12"><b><h4>Patient History</h4></b>
+            <button (click)="backToLogin('patienthistory');" label="Go Back" pButton
+                    style="display: block;margin-left: 14px;margin-top: -30px;float: right" type="button"></button>
+        </div>
+
+
+        <div style=" padding: 50px;">
+            <div class="row">
+                <div class="col-sm-4 form-group">
+                    <label class="form-label" for="memberId"><b>Patient ID :</b> </label><input
+                        [(ngModel)]="Patients.patientId" class="form-control" id="memberId" readonly type="text"/>
+                </div>
+                <div class="col-sm-4 form-group">
+                    <label class="form-label" for="firstName"><b>First Name :</b> </label><input
+                        [(ngModel)]="Patients.firstName" class="form-control" id="firstName" readonly type="text"/>
+                </div>
+                <div class="col-sm-4 form-group">
+                    <label class="form-label" for="lastName"><b>Last Name :</b> </label><input
+                        [(ngModel)]="Patients.lastName" class="form-control" id="lastName" readonly type="text"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4 form-group">
+                    <label class="form-label" for="ProviderName"><b>DOB : </b></label><input [(ngModel)]="Patients.dob"
+                                                                                             class="form-control"
+                                                                                             id="ProviderName" readonly
+                                                                                             type="text"/>
+                </div>
+                <div class="col-sm-4 form-group">
+                    <label class="form-label" for="Gender"><b>Gender :</b> </label><input [(ngModel)]="Patients.gender"
+                                                                                          class="form-control"
+                                                                                          id="gender" readonly
+                                                                                          type="text"/>
+                </div>
+
+            </div>
+            <div class="row ">
+                <div class="col col-lg-12">
+                    <button (click)="addPatientForm();" icon="fa fa-plus" label="ADD" pButton style="float: right"
+                            type="button"></button>
+                </div>
+            </div>
+            <div class="row ">
+                <div class="col-sm-12 ">
+
+                    <div class="chart-content">
+                        <table id="chart-abstraction-tab-table">
+                            <tr>
+                                <th style="width:18%">Visit ID</th>
+                                <th style="width:18%">Encounter Type</th>
+                                <th style="width:18%">Encounter Start Date</th>
+                                <th style="width:18%">Encounter End Date</th>
+                                <th style="width:18%">&nbsp;</th>
+                            </tr>
+                            <tr *ngFor="let visit of visitPatients">
+                                <td>{{visit.visit}}</td>
+                                <td> {{visit.encounterValueset}}</td>
+                                <td>{{visit.encounterStartDate}}</td>
+                                <td> {{visit.encounterEndDate}}</td>
+                                <td><span (click)="detailPatientForm(visit.visit);" style="cursor:pointer;"> <i
+                                        aria-hidden="true" class="fa fa-pencil-square-o"></i></span></td>
+                            </tr>
+                        </table>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Patient list view-->
+
+<!-- Modal html-->
+<div *ngIf="abstucttemplate == 'PatientTool'" style="margin-top: 10px">
+    <app-page-header [heading]="'Chart Abstraction Tool'" [icon]="'fa-table'"></app-page-header>
+    <div class="chart-abstraction-tool-3 justify-content-md-center">
+        <div class="col col-lg-12"><b><h4>Add Encounter Details</h4></b>
+            <button (click)="backToLogin('patientencounter');" label="Go Back" pButton
+                    style="display: block;margin-left: 14px;margin-top: -30px;float: right" type="button"></button>
+        </div>
+
+        <div style=" padding: 50px;">
+
+            <div class="row">
+                <div class="col-sm-4 form-group">
+                    <label class="form-label" for="memberId"><b>Patient ID : </b></label><input
+                        [(ngModel)]="Patients.patientId" class="form-control" id="memberId" readonly type="text"/>
+                </div>
+                <div class="col-sm-4 form-group">
+                    <label class="form-label" for="firstName"><b>First Name : </b></label><input
+                        [(ngModel)]="Patients.firstName" class="form-control" id="firstName" readonly type="text"/>
+                </div>
+                <div class="col-sm-4 form-group">
+                    <label class="form-label" for="lastName"><b>Last Name :</b> </label><input
+                        [(ngModel)]="Patients.lastName" class="form-control" id="lastName" readonly type="text"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4 form-group">
+                    <label class="form-label" for="ProviderName"><b>Provider :</b> </label>
+                    <!-- <select  [(ngModel)]="visitPatients.provider">
+                        <option value="" selected disabled>Select Provider</option>
+                        <option *ngFor="let data of providerList" >{{data.label}}</option>
+                    </select> -->
+                    <p-dropdown [(ngModel)]="visitPatients.provider" [autoDisplayFirst]="false" [options]="providerList"
+                                [style]="{'border': '1px solid #ABACAD','width':'100%','padding':'0px'}"
+                                placeholder="Select Provider" styleClass="form-control"></p-dropdown>
+                    <!-- <input id="ProviderName" type="text" class="form-control" [(ngModel)]="visitPatients.provider" autocomplete="off"/> -->
+                </div>
+                <div class="col-sm-4 form-group">
+                    <label class="form-label" for="encounterStartDate"><b>Encounter Start Date :</b> </label><input
+                        (ngModelChange)="validateDate($event)" [(ngModel)]="visitPatients.encounterStartDate"
+                        class="form-control" id="encounterStartDate" type="date"/>
+                </div>
+                <div class="col-sm-4 form-group">
+                    <label class="form-label" for="encounterEndDate"><b>Encounter End Date : </b></label><input
+                        (ngModelChange)="validateDate($event)" [(ngModel)]="visitPatients.encounterEndDate"
+                        class="form-control" id="encounterEndDate" type="date"/>
+                </div>
+                <div _ngcontent-c5="" class="col-sm-4">&nbsp;</div>
+                <div *ngIf="dateError" class="col-sm-8 form-group alert alert-danger">
+                    <span>End date should be greater than Start date</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4 form-group">
+                    <label class="form-label" for="encounterType"><b>Encounter Type :</b> </label><input
+                        [(ngModel)]="Patients.encounterType" class="form-control" id="encounterType" type="text"/>
+                </div>
+                <div class="col-sm-2 form-group">
+                    <label>&nbsp;</label>
+                    <button (click)="showDialog()" class="btn btn-primary btn-color" type="button">Selection Panel
+                    </button>
+                    <span *ngIf="smallloader"><i class="fa fa-spinner fa-spin" style="font-size:24px"></i></span>
+                </div>
+            </div>
+            <div class="row float-right">
+                <div class="col-sm-12 form-group float-right">
+                    <input (click)="navigateRecord()" class="btn btn-primary btn-color" type="submit" value="Submit">
+                </div>
+            </div>
+
+
+            <div class="selection-panel  col-lg-12" style>
+
+                <p-dialog #p3 [(visible)]="displayDialogBox" [baseZIndex]="10" [minY]="70" [modal]="true"
+                          [responsive]="true" header="Encounter Type Selection Panel">
+                    <div>
+                        <dual-list [(destination)]="destination" [source]="encounterTypes"></dual-list>
+                        <br/>
+                        <button (click)="hideDialog()" class="btn btn-primary btn-color float-right" type="button">
+                            Save
+                        </button>
+                    </div>
+                </p-dialog>
+
+            </div>
+        </div>
+    </div>
+</div>
+      
